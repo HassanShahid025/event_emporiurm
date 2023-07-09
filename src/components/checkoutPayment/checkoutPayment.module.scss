@@ -1,0 +1,59 @@
+.options {
+  display: flex;
+  label {
+    margin-left: 10px;
+    font-size: 1.3rem;
+    font-weight: 500;
+  }
+}
+
+.inputBox {
+  margin: 15px 0;
+  input,
+  .select {
+    width: 100%;
+    border: 1px solid #ccc;
+    padding: 10px 15px;
+    font-size: 15px;
+    text-transform: none;
+    &:focus {
+      border: 1px solid rgb(87, 137, 223);
+    }
+  }
+  span {
+    margin-bottom: 10px;
+    font-size: 1.5rem;
+    display: block;
+  }
+  img {
+    height: 34px;
+    margin-top: 5px;
+    filter: drop-shadow(0 0 1px #000);
+  }
+}
+
+.container form .row .col .inputBox input:focus {
+  border: 1px solid #000;
+}
+.flex {
+  display: flex;
+  gap: 15px;
+  .inputBox {
+    margin-top: 5px;
+  }
+}
+
+.checkoutBtn {
+  width: 100%;
+  &:disabled {
+    opacity: 0.5; /* or any other value between 0 and 1 */
+  }
+}
+
+.expiration {
+  border: 1px solid #bbbbbb;
+  display: flex;
+}
+.expiration input {
+  border: 0;
+}
