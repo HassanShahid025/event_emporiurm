@@ -1,5 +1,5 @@
 # ecommerce-react
 admin credentials:
-  email: adminedukaan@gmail.com
-  password: adminedukaan
+  email: admin@gmail.com
+  password: 123456
 
