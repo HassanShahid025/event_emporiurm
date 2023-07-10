@@ -216,3 +216,8 @@ a:hover {
   color: var(--color-dark);
   font-size: 1.5rem;
 }
+
+.check{
+  min-width: 100%;
+  min-height: 10rem;
+}

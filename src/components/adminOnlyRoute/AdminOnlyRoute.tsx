@@ -6,8 +6,8 @@ import { Link } from "react-router-dom";
 const AdminOnlyRoute = ({ children }: any) => {
   const { email } = useSelector((store: RootState) => store.auth);
 
-  if (email === "adminedukaan@gmail.com") {
-    // password = adminedukaan
+  if (email === import.meta.env.VITE_REACT_APP_ADMIN_USER) {
+    // password = 123456
     return children;
   } else {
     return (
@@ -30,7 +30,7 @@ export const AdminOnlyLinks = ({ children }: any) => {
   const { email } = useSelector((store: RootState) => store.auth);
 
   if (email === import.meta.env.VITE_REACT_APP_ADMIN_USER) {
-    // password = adminedukaan
+ 
     return children;
   } else {
     return null;

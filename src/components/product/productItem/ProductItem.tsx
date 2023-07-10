@@ -12,6 +12,8 @@ import {
 import { AiOutlineHeart, AiTwotoneHeart } from "react-icons/ai";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../redux/store";
+import { addDoc, collection } from "firebase/firestore";
+import { db } from "../../../firebase/config";
 
 interface IProductItem {
   product: IProducts;
@@ -20,9 +22,10 @@ interface IProductItem {
 
 const ProductItem = ({ product, grid }: IProductItem) => {
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
-  const { id, name, price, desc, imageURL } = product;
+  const { id, name, price, desc, imageURL, city } = product;
   const { cartItems } = useSelector((store: RootState) => store.cart);
-  const isFavourite = cartItems.find((item) => item.id === id)
+  const { userId } = useSelector((store: RootState) => store.auth);
+  const isFavourite = cartItems.find((item) => item.id === id);
 
   const shortingText = (text: string, n: number) => {
     if (text.length > n) {
@@ -34,10 +37,10 @@ const ProductItem = ({ product, grid }: IProductItem) => {
 
   const dispatch = useDispatch();
 
-  const addToCart = (product: IProducts) => {
-    dispatch(add_to_cart({ product }));
-    dispatch(calculate_CartTotalQuantity());
-  };
+  // const addToCart = (product: IProducts) => {
+  //   dispatch(add_to_cart({ product }));
+  //   dispatch(calculate_CartTotalQuantity());
+  // };
 
   const toggleFavourite = (product: IProducts) => {
     dispatch(toggle_favourite({ product }));
@@ -47,33 +50,36 @@ const ProductItem = ({ product, grid }: IProductItem) => {
     setWindowWidth(windowWidth);
   }, [grid]);
 
+  
+
+
   return (
     <Card cardClass={grid ? `${style.grid}` : `${style.list}`}>
       <Link to={`/product-details/${id}`}>
         <div className={style.img}>
-          <img src={imageURL} alt={name} />
+          <img src={imageURL![0]} alt={name} />
         </div>
       </Link>
       <div className={style.content}>
         <div className={style.details}>
           <div>
-            <p>{`Rs ${price}`}</p>
+            <h5>{`Rs ${price}`}</h5>
             {isFavourite ? (
               <AiTwotoneHeart
-              size={25}
-              style={{ cursor: "pointer" }}
-              onClick={() => toggleFavourite(product)}
-            />
+                size={25}
+                style={{ cursor: "pointer" }}
+                onClick={() => toggleFavourite(product)}
+              />
             ) : (
               <AiOutlineHeart
-              size={25}
-              style={{ cursor: "pointer" }}
-              onClick={() => toggleFavourite(product)}
-            />
+                size={25}
+                style={{ cursor: "pointer" }}
+                onClick={() => toggleFavourite(product)}
+              />
             )}
-            
           </div>
           <h4>{shortingText(name!, 18)}</h4>
+          <p>{city}</p>
         </div>
         {!grid && (
           <p className={style.desc}>
@@ -82,12 +88,12 @@ const ProductItem = ({ product, grid }: IProductItem) => {
               : shortingText(desc!, 50)}
           </p>
         )}
-        <button
+        {/* <button
           className="--btn --btn-danger"
           onClick={() => addToCart(product)}
         >
           Add To Cart
-        </button>
+        </button> */}
       </div>
     </Card>
   );

@@ -20,27 +20,34 @@ import spinnerImg from "../../../assets/spinner.jpg";
 const categories = [
   {
     id: 1,
-    name: "Laptop",
+    name: "Outdoor",
   },
   {
     id: 2,
-    name: "Electronics",
+    name: "Indoor",
+  }
+];
+const cities = [
+  {
+    id: 1,
+    name: "Karachi",
   },
   {
-    id: 3,
-    name: "Phone",
+    id: 2,
+    name: "Lahore",
   },
   {
-    id: 4,
-    name: "Fashion",
-  },
+    id: 2,
+    name: "Islamabad"
+  }
 ];
 
 const initialState = {
   name: "",
-  imageURL: "",
+  imageURL: [],
   price: 0,
-  brand: "",
+  city: "",
+  location: "",
   category: "",
   desc: "",
 };
@@ -77,19 +84,27 @@ const AddProduct = () => {
         name: product.name,
         imageURL: product.imageURL,
         price: Number(product.price),
-        brand: product.brand,
         category: product.category,
         desc: product.desc,
         createdAt: productEdit?.createdAt,
         editedAt: Timestamp.now().toDate(),
       });
 
-      if (product.imageURL !== productEdit?.imageURL) {
-        const storageRef = ref(storage, productEdit?.imageURL);
-        deleteObject(storageRef);
-      }
+      // for(let i=0; i<4; i++){
+      //   if(!productEdit?.imageURL?.includes(product.imageURL![i])){
+      //     const storageRef = ref(storage, productEdit?.imageURL);
+      //   deleteObject(storageRef);
+      //   }
+      // }
+
+
+      // if (product.imageURL !== productEdit?.imageURL) {
+      //   const storageRef = ref(storage, productEdit?.imageURL);
+      //   deleteObject(storageRef);
+      // }
+
       setIsLoading(false);
-      toast.success("Product edited successfully.");
+      toast.success("Venue edited successfully.");
       navigate("/admin/all-products");
     } catch (error: any) {
       setIsLoading(false);
@@ -102,6 +117,9 @@ const AddProduct = () => {
     setProduct({ ...product, [name]: value });
   };
 
+  const setImageURL = (downloadURL:string) => {
+      setProduct({ ...product, imageURL: [...product.imageURL!, downloadURL] });
+  }
   const handelImageChange = (e: any) => {
     const file = e.target.files[0];
     const storageRef = ref(storage, `eshop/${Date.now()}${file.name}`);
@@ -119,7 +137,7 @@ const AddProduct = () => {
       },
       () => {
         getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-          setProduct({ ...product, imageURL: downloadURL });
+          setImageURL(downloadURL)
           toast.success("Image uploaded successfully.");
         });
       }
@@ -133,15 +151,16 @@ const AddProduct = () => {
       const docRef = addDoc(collection(db, "products"), {
         name: product.name,
         imageURL: product.imageURL,
+        city: product.city,
+        location: product.location,
         price: Number(product.price),
-        brand: product.brand,
         category: product.category,
         desc: product.desc,
-        createdAt: Timestamp.now().toDate(),
+        createdAt: Timestamp.now().toDate().toDateString(),
       });
       setIsLoading(false);
       setProduct(initialState);
-      toast.success("Product uploaded successfully.");
+      toast.success("Venue added successfully.");
     } catch (error: any) {
       setIsLoading(false);
       toast.error(error.message);
@@ -159,20 +178,20 @@ const AddProduct = () => {
        />
       )}
       <div className={styles.product}>
-        <h2>{detectForm(id!, "Add Product", "Edit Product")}</h2>
+        <h2>{detectForm(id!, "Add Venue", "Edit Venue")}</h2>
         <Card cardClass={styles.card}>
           <form onSubmit={detectForm(id!, addProduct, editProduct)}>
-            <label>Product name:</label>
+            <label>Venue name:</label>
             <input
               type="text"
-              placeholder="Product name"
+              placeholder="Venue name"
               required
               name="name"
               value={product.name}
               onChange={(e) => handelInputChange(e)}
             />
 
-            <label>Product image:</label>
+            <label>Venue images:</label>
             <Card className={styles.group}>
               {uploadProgress === 0 ? null : (
                 <div className={styles.progress}>
@@ -191,21 +210,51 @@ const AddProduct = () => {
                 type="file"
                 name="image"
                 accept="image/*"
-                placeholder="Product Image"
+                placeholder="Venue Image"
                 onChange={(e) => handelImageChange(e)}
               />
-              {product.imageURL !== "" ? (
+              {product.imageURL![0] !== "" ? (
                 <input
                   type="text"
                   // required
                   placeholder="Image URL"
                   name="imageURL"
                   disabled
-                  value={product.imageURL}
+                  value={product.imageURL![0]}
+                />
+              ) : null}
+              {product.imageURL![1] !== "" ? (
+                <input
+                  type="text"
+                  // required
+                  placeholder="Image URL"
+                  name="imageURL"
+                  disabled
+                  value={product.imageURL![1]}
+                />
+              ) : null}
+              {product.imageURL![2] !== "" ? (
+                <input
+                  type="text"
+                  // required
+                  placeholder="Image URL"
+                  name="imageURL"
+                  disabled
+                  value={product.imageURL![2]}
+                />
+              ) : null}
+              {product.imageURL![3] !== "" ? (
+                <input
+                  type="text"
+                  // required
+                  placeholder="Image URL"
+                  name="imageURL"
+                  disabled
+                  value={product.imageURL![3]}
                 />
               ) : null}
             </Card>
-            <label>Product price:</label>
+            <label>Venue price:</label>
             <input
               type="number"
               placeholder="Product price"
@@ -214,7 +263,16 @@ const AddProduct = () => {
               value={product.price}
               onChange={(e) => handelInputChange(e)}
             />
-            <label>Product Category</label>
+            <label>Venue location:</label>
+            <input
+              type="text"
+              placeholder="Product location"
+              required
+              name="location"
+              value={product.location}
+              onChange={(e) => handelInputChange(e)}
+            />
+            <label>Venue category</label>
             <select
               required
               name="category"
@@ -232,16 +290,25 @@ const AddProduct = () => {
                 );
               })}
             </select>
-            <label>Product Company/Brand:</label>
-            <input
-              type="text"
-              placeholder="Product brand"
+            <label>Venue city</label>
+            <select
               required
-              name="brand"
-              value={product.brand}
+              name="city"
+              value={product.city}
               onChange={(e) => handelInputChange(e)}
-            />
-            <label>Product description</label>
+            >
+              <option value="" disabled>
+                -- Choose Venue City --
+              </option>
+              {cities.map((cat) => {
+                return (
+                  <option value={cat.name} key={cat.id}>
+                    {cat.name}
+                  </option>
+                );
+              })}
+            </select>
+            <label>Venue description</label>
             <textarea
               name="desc"
               required
@@ -251,7 +318,7 @@ const AddProduct = () => {
               onChange={(e) => handelInputChange(e)}
             ></textarea>
             <button className="--btn --btn-primary">
-              {detectForm(id!, "Save Product", "Edit Product")}
+              {detectForm(id!, "Save Venue", "Edit Venue")}
             </button>
           </form>
         </Card>

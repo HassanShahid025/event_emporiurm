@@ -2,7 +2,7 @@
   width: 24rem;
   background-color: #fff;
   margin: 5px;
-  height: 36rem;
+  height: 30rem;
   position: relative;
   .img {
     padding: 1rem;
@@ -41,7 +41,7 @@
       }
       p {
         font-weight: 500;
-        color: #274d5a;
+        color: grey;
       }
     }
     button {
@@ -82,12 +82,17 @@
       display: flex;
       flex-direction: column;
       margin-bottom: 1rem;
-      h4 {
-        font-weight: 400;
+      h5 {
+        font-weight: 600;
+        font-size: 1.5rem;
       }
       p {
         font-weight: 500;
-        color: #274d5a;
+        color: grey;
+      }
+      div{
+        display: flex;
+        justify-content: space-between;
       }
     }
     button {

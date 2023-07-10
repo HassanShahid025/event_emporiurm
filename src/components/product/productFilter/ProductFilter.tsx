@@ -33,23 +33,23 @@ const ProductFilter = () => {
   //   dispatch(filter_by_brand({products,brand}))
   // },[brand,products])
 
-  let allBrands: string[] = [];
+  let allCities: string[] = [];
   const getBrands = (cat: string) => {
     if (cat === "All") {
-      allBrands = [
+      allCities = [
         "All",
-        ...new Set(products.map((product) => product.brand!)),
+        ...new Set(products.map((product) => product.city!)),
       ];
     } else {
-      allBrands = ["All"];
+      allCities = ["All"];
       products.forEach((product) => {
-        if (product.category === cat && !allBrands.includes(product.brand!)) {
-          allBrands.push(product.brand!);
+        if (product.category === cat && !allCities.includes(product.city!)) {
+          allCities.push(product.city!);
         }
       });
     }
-    return allBrands.map((brand) => {
-      return <option value={brand}>{brand}</option>;
+    return allCities.map((city) => {
+      return <option value={city}>{city}</option>;
     });
   };
   useEffect(() => {
@@ -92,7 +92,7 @@ const ProductFilter = () => {
           );
         })}
       </div>
-      <h4>Brand</h4>
+      <h4>City</h4>
       <div className={style.brand}>
         <select value={brand} onChange={(e: any) => setBrand(e.target.value)}>
           {getBrands(category)}

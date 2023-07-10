@@ -4,12 +4,12 @@ import { getFirestore } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
 
 const firebaseConfig = {
-  apiKey: import.meta.env.VITE_REACT_APP_FB_API_KEY,
-  authDomain: "eshop-b68db.firebaseapp.com",
-  projectId: "eshop-b68db",
-  storageBucket: "eshop-b68db.appspot.com",
-  messagingSenderId: "1036971393470",
-  appId: "1:1036971393470:web:f4cc74160e76d77cb7b9ef",
+  apiKey: "AIzaSyAKmUfLx62i5uVgi4ipXfA8FKoEcPbIrYU",
+  authDomain: "event-emporium-1949d.firebaseapp.com",
+  projectId: "event-emporium-1949d",
+  storageBucket: "event-emporium-1949d.appspot.com",
+  messagingSenderId: "1018283384486",
+  appId: "1:1018283384486:web:8d1dcd69158402265c9e67"
 };
 
 // Initialize Firebase

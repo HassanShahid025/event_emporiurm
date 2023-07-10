@@ -22,8 +22,8 @@ import OrderDetails from "./pages/orderDetails/OrderDetails";
 import ReviewProduct from "./components/reviewProduct/ReviewProduct";
 import NotFound from "./pages/notFound/NotFound";
 
-
 function App() {
+
   return (
     <>
       <Header />

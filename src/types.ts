@@ -1,9 +1,10 @@
 export interface IProducts {
-  brand?: string;
   category?: string;
   id?: string;
-  imageURL?: string;
+  imageURL?: string[];
   name?: string;
+  city?: string;
+  location?:string;
   price?: number;
   desc?: string;
   createdAt?: any;

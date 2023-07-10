@@ -86,8 +86,8 @@ const Header = () => {
   const cart = (
     <span className="cart">
       <NavLink to="/cart" className={activeLink}>
-        Cart
-        <FaShoppingCart size={20} />
+        Favourites
+        {/* <FaShoppingCart size={20} /> */}
         <p>{cartTotalQuantity}</p>
       </NavLink>
     </span>

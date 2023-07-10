@@ -18,6 +18,7 @@ import useFetchDocument from "../../../customHooks/useFetchDocument";
 import useFetchCollection from "../../../customHooks/useFetchCollection";
 import { Card } from "../../card/Card";
 import StarsRating from "react-star-rate";
+import Carousell from "../../carousel/Carousel";
 
 const ProductDetails = () => {
   const { id } = useParams();
@@ -61,7 +62,8 @@ const ProductDetails = () => {
           <>
             <div className={style.details}>
               <div className={style.img}>
-                <img src={product.imageURL} alt={product.name} />
+                <Carousell url={product.imageURL!}/>
+                {/* <img src={product.imageURL} alt={product.name} /> */}
               </div>
               <div className={style.content}>
                 <h3>{product.name}</h3>
@@ -71,7 +73,7 @@ const ProductDetails = () => {
                   <b>SKU</b> {product.id}
                 </p>
                 <p>
-                  <b>Brand</b> {product.brand}
+                  <b>City</b> {product.city}
                 </p>
                 {cart && (
                   <div className={style.count}>

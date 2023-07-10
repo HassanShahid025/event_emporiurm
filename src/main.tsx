@@ -6,13 +6,17 @@ import App from "./App";
 import "./index.css";
 import { store } from "./redux/store";
 import ScrollToTop from "./components/ScrollToTop";
+import "antd/dist/reset.css";
+import { ConfigProvider } from "antd";
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
     <BrowserRouter>
       <Provider store={store}>
-      <ScrollToTop />
-        <App />
+        <ScrollToTop />
+        <ConfigProvider>
+          <App />
+        </ConfigProvider>
       </Provider>
     </BrowserRouter>
   </React.StrictMode>
