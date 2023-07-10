@@ -6,20 +6,12 @@ import { IProducts } from "../../types";
 import { FaTrashAlt } from "react-icons/fa";
 import { Card } from "../../components/card/Card";
 import { useDispatch } from "react-redux";
-import {
-  add_to_cart,
-  calculate_CartTotalQuantity,
-  calculate_cartTotalAmount,
-  clear_cart,
-  decrease_cart,
-  remove_from_cart,
-  save_url,
-} from "../../redux/features/cartSlice";
+import { clear_cart, toggle_favourite } from "../../redux/features/cartSlice";
 import Notiflix from "notiflix";
 import { useEffect } from "react";
 
 const Cart = () => {
-  const { cartItems, cartTotalAmount, cartTotalQuantity } = useSelector(
+  const { cartItems} = useSelector(
     (store: RootState) => store.cart
   );
   const { isLoggedIn } = useSelector((store: RootState) => store.auth);
@@ -27,21 +19,21 @@ const Cart = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const increaseCart = (cart: IProducts) => {
-    dispatch(add_to_cart({ product: cart }));
-  };
-  const decreaseCart = (cart: IProducts) => {
-    dispatch(decrease_cart({ product: cart }));
-  };
+  // const increaseCart = (cart: IProducts) => {
+  //   dispatch(add_to_cart({ product: cart }));
+  // };
+  // const decreaseCart = (cart: IProducts) => {
+  //   dispatch(decrease_cart({ product: cart }));
+  // };
 
   const deleteCartItem = (cart: IProducts) => {
     Notiflix.Confirm.show(
-      "Remove Product",
-      "You are about to remove this product from cart?",
+      "Remove Venue",
+      "You are about to remove this venue from favourites?",
       "Remove",
       "Cancel",
       function okCb() {
-        dispatch(remove_from_cart({ product: cart }));
+        dispatch(toggle_favourite({ product: cart }));
       },
       function cancelCb() {
         console.log("cancel");
@@ -58,8 +50,8 @@ const Cart = () => {
 
   const clearCart = () => {
     Notiflix.Confirm.show(
-      "Clear Cart",
-      "You are about to clear the cart?",
+      "Clear Favourites",
+      "You are about to clear the favourites?",
       "Clear",
       "Cancel",
       function okCb() {
@@ -78,33 +70,33 @@ const Cart = () => {
     );
   };
 
-  useEffect(() => {
-    dispatch(calculate_cartTotalAmount());
-    dispatch(calculate_CartTotalQuantity());
-    dispatch(save_url(""));
-  }, [cartItems]);
+  // useEffect(() => {
+  //   dispatch(calculate_cartTotalAmount());
+  //   dispatch(calculate_CartTotalQuantity());
+  //   dispatch(save_url(""));
+  // }, [cartItems]);
 
   const url = window.location.href;
 
-  const checkout = () => {
-    if (isLoggedIn) {
-      navigate("/checkout-details");
-    } else {
-      dispatch(save_url(url));
-      navigate("/login");
-    }
-  };
+  // const checkout = () => {
+  //   if (isLoggedIn) {
+  //     navigate("/checkout-details");
+  //   } else {
+  //     dispatch(save_url(url));
+  //     navigate("/login");
+  //   }
+  // };
 
   return (
     <section>
       <div className={`container ${style.table}`}>
-        <h2>Shopping Cart</h2>
+        <h2>Favourites</h2>
         {cartItems.length === 0 ? (
           <>
-            <p>Your cart is currently empty.</p>
+            <p>You have no favourites.</p>
             <br />
             <div>
-              <Link to="/#products">&larr; Continue shopping</Link>
+              <Link to="/#products">&larr; Continue browsing</Link>
             </div>
           </>
         ) : (
@@ -113,16 +105,16 @@ const Cart = () => {
               <thead>
                 <tr>
                   <th>s/n</th>
-                  <th>Products</th>
+                  <th>Venues</th>
                   <th>Price</th>
-                  <th>Quantity</th>
+                  <th>Category</th>
                   <th>Total</th>
                   <th>Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {cartItems.map((cart: IProducts, index: number) => {
-                  const { id, name, price, imageURL, cartQuantiy } = cart;
+                  const { id, name, price, imageURL, cartQuantiy,category } = cart;
                   return (
                     <tr key={id}>
                       <td>{index + 1}</td>
@@ -130,18 +122,21 @@ const Cart = () => {
                         <p>
                           <b>{name}</b>
                         </p>
+                        <Link to={`/product-details/${id}`}>
                         <img
-                          src={imageURL}
+                          src={imageURL![0]}
                           alt={name}
                           style={{ width: "100px" }}
                         />
+                        </Link>
                       </td>
                       <td>{price}</td>
                       <td>
-                        <div className={style.count}>
+                        {category}
+                        {/* <div className={style.count}>
                           <button
                             className="--btn"
-                            onClick={() => decreaseCart(cart)}
+                           
                           >
                             -
                           </button>
@@ -150,11 +145,11 @@ const Cart = () => {
                           </p>
                           <button
                             className="--btn"
-                            onClick={() => increaseCart(cart)}
+                          
                           >
                             +
                           </button>
-                        </div>
+                        </div> */}
                       </td>
                       <td>{(price! * cartQuantiy!).toFixed(2)}</td>
                       <td className={style.icons}>
@@ -175,12 +170,12 @@ const Cart = () => {
               </button>
               <div className={style.checkout}>
                 <div>
-                  <Link to="/#products">Continue shopping</Link>
+                  <Link to="/#products">Continue Browsing</Link>
                 </div>
                 <br />
-                <Card cardClass={style.card}>
+                {/* <Card cardClass={style.card}>
                   <p>
-                    Cart items(s): <b>{cartTotalQuantity}</b>
+                    Cart items(s): <b>{cartItems.length}</b>
                   </p>
                   <div className={style.text}>
                     <h4>Subtotal:</h4>
@@ -193,7 +188,7 @@ const Cart = () => {
                   >
                     Checkout
                   </button>
-                </Card>
+                </Card> */}
               </div>
             </div>
           </>

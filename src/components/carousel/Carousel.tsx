@@ -16,7 +16,7 @@ const Carousell = ({ url }: ICarousell) => {
   const onChange = (currentSlide: number) => {
     console.log(currentSlide);
   };
-  console.log(url[0]);
+
   return (
     <Carousel afterChange={onChange} style={{ backgroundColor: "red", }}>
       <img src={url[0]} className="check" />

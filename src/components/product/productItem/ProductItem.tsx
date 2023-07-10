@@ -2,11 +2,9 @@ import React, { useEffect, useState } from "react";
 import style from "./ProductItem.module.scss";
 import { IProducts } from "../../../types";
 import { Card } from "../../card/Card";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import {
-  add_to_cart,
-  calculate_CartTotalQuantity,
   toggle_favourite,
 } from "../../../redux/features/cartSlice";
 import { AiOutlineHeart, AiTwotoneHeart } from "react-icons/ai";
@@ -14,6 +12,8 @@ import { useSelector } from "react-redux";
 import { RootState } from "../../../redux/store";
 import { addDoc, collection } from "firebase/firestore";
 import { db } from "../../../firebase/config";
+import Notiflix from "notiflix";
+import { addPrevURL } from "../../../redux/features/authSlice";
 
 interface IProductItem {
   product: IProducts;
@@ -24,7 +24,7 @@ const ProductItem = ({ product, grid }: IProductItem) => {
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
   const { id, name, price, desc, imageURL, city } = product;
   const { cartItems } = useSelector((store: RootState) => store.cart);
-  const { userId } = useSelector((store: RootState) => store.auth);
+  const { userId, isLoggedIn } = useSelector((store: RootState) => store.auth);
   const isFavourite = cartItems.find((item) => item.id === id);
 
   const shortingText = (text: string, n: number) => {
@@ -36,19 +36,51 @@ const ProductItem = ({ product, grid }: IProductItem) => {
   };
 
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   // const addToCart = (product: IProducts) => {
   //   dispatch(add_to_cart({ product }));
   //   dispatch(calculate_CartTotalQuantity());
-  // };
 
-  const toggleFavourite = (product: IProducts) => {
+  const checkLogin = () => {
+    if(isLoggedIn){
+      toggleFavourite()
+    }
+    else{
+      Notiflix.Confirm.show(
+        "Login",
+        "Login to add to favourites",
+        "Login",
+        "Cancel",
+        function okCb() {
+          navigate("/login")
+          dispatch(addPrevURL({product,url:'/'}))
+        },
+        function cancelCb() {
+          console.log("cancel");
+        },
+        {
+          width: "320px",
+          borderRadius: "8px",
+          titleColor: "#f7c17b",
+          okButtonBackground: "#f7c17b",
+          cssAnimationStyle: "zoom",
+        }
+      );
+    }
+   
+  };
+
+
+  const toggleFavourite = () => {
     dispatch(toggle_favourite({ product }));
   };
 
   useEffect(() => {
     setWindowWidth(windowWidth);
   }, [grid]);
+
+ 
 
   
 
@@ -68,13 +100,13 @@ const ProductItem = ({ product, grid }: IProductItem) => {
               <AiTwotoneHeart
                 size={25}
                 style={{ cursor: "pointer" }}
-                onClick={() => toggleFavourite(product)}
+                onClick={() => checkLogin()}
               />
             ) : (
               <AiOutlineHeart
                 size={25}
                 style={{ cursor: "pointer" }}
-                onClick={() => toggleFavourite(product)}
+                onClick={() => checkLogin()}
               />
             )}
           </div>

@@ -14,21 +14,28 @@ import "react-toastify/dist/ReactToastify.css";
 import { useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
 import spinnerImg from '../../assets/spinner.jpg'
+import { useDispatch } from "react-redux";
+import { removePrevURL } from "../../redux/features/authSlice";
+import { toggle_favourite } from "../../redux/features/cartSlice";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const { previousUrl } = useSelector((store: RootState) => store.cart);
+  // const { previousUrl } = useSelector((store: RootState) => store.cart);
+  const { previousURL,product } = useSelector((store: RootState) => store.auth);
 
   const navigate = useNavigate();
+  const dispatch = useDispatch()
 
   const redirectUser = () => {
-    if (previousUrl === "") {
+    if (previousURL === null) {
       navigate("/");
     } else {
-      navigate("/cart");
+      navigate(previousURL);
+      dispatch(toggle_favourite({ product}));
+      dispatch(removePrevURL())
     }
   };
 

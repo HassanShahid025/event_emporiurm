@@ -1,16 +1,11 @@
 import { useEffect, useState } from "react";
 import style from "./ProductDetails.module.scss";
-import { Link, useParams } from "react-router-dom";
+import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "../../../firebase/config";
 import { IProducts } from "../../../types";
 import { toast } from "react-toastify";
 import spinnerImg from "../../../assets/spinner.jpg";
-import {
-  add_to_cart,
-  calculate_CartTotalQuantity,
-  decrease_cart,
-} from "../../../redux/features/cartSlice";
 import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../redux/store";
@@ -19,6 +14,10 @@ import useFetchCollection from "../../../customHooks/useFetchCollection";
 import { Card } from "../../card/Card";
 import StarsRating from "react-star-rate";
 import Carousell from "../../carousel/Carousel";
+import { toggle_favourite } from "../../../redux/features/cartSlice";
+import { FiExternalLink } from "react-icons/fi";
+import Notiflix from "notiflix";
+import { addPrevURL } from "../../../redux/features/authSlice";
 
 const ProductDetails = () => {
   const { id } = useParams();
@@ -31,30 +30,64 @@ const ProductDetails = () => {
   }, [document]);
 
   const dispatch = useDispatch();
+  const navigate = useNavigate()
+  const location = useLocation();
 
   const { cartItems } = useSelector((store: RootState) => store.cart);
+  const { isLoggedIn } = useSelector((store: RootState) => store.auth);
   const { data } = useFetchCollection("reviews");
   const filteredReviews = data.filter((review) => review.productID == id);
-  console.log(filteredReviews);
 
   const cart = cartItems.find((cart) => cart.id === id);
 
-  const decreaseCart = (cart: IProducts) => {
-    dispatch(decrease_cart({ product: cart }));
-    dispatch(calculate_CartTotalQuantity());
+
+  // const decreaseCart = (cart: IProducts) => {
+  //   dispatch(decrease_cart({ product: cart }));
+  //   dispatch(calculate_CartTotalQuantity());
+  // };
+
+  // const addToCart = (product: IProducts) => {
+  //   dispatch(add_to_cart({ product }));
+  //   dispatch(calculate_CartTotalQuantity());
+  // };
+
+  const toggleFavourite = () => {
+    dispatch(toggle_favourite({ product }));
   };
 
-  const addToCart = (product: IProducts) => {
-    dispatch(add_to_cart({ product }));
-    dispatch(calculate_CartTotalQuantity());
+  const checkLogin = () => {
+    if (isLoggedIn) {
+      toggleFavourite();
+    } else {
+      Notiflix.Confirm.show(
+        "Login",
+        "Login to add to favourites",
+        "Login",
+        "Cancel",
+        function okCb() {
+          navigate("/login");
+          dispatch(addPrevURL({ product, url: location.pathname }));
+        },
+        function cancelCb() {
+          console.log("cancel");
+        },
+        {
+          width: "320px",
+          borderRadius: "8px",
+          titleColor: "#f7c17b",
+          okButtonBackground: "#f7c17b",
+          cssAnimationStyle: "zoom",
+        }
+      );
+    }
   };
 
   return (
     <section>
       <div className={`container ${style.product}`}>
-        <h2>Product Details</h2>
+        <h2>Venue Details</h2>
         <div>
-          <Link to="/#products">&larr; Back to Products</Link>
+          <Link to="/#products">&larr; Back to Venues</Link>
         </div>
         {product === null ? (
           <img src={spinnerImg} alt="Loading.." style={{ width: "50px" }} />
@@ -62,12 +95,12 @@ const ProductDetails = () => {
           <>
             <div className={style.details}>
               <div className={style.img}>
-                <Carousell url={product.imageURL!}/>
+                <Carousell url={product.imageURL!} />
                 {/* <img src={product.imageURL} alt={product.name} /> */}
               </div>
               <div className={style.content}>
                 <h3>{product.name}</h3>
-                <p className={style.price}>{`$${product.price}`}</p>
+                <p className={style.price}>{`Rs: ${product.price}`}</p>
                 <p>{product.desc}</p>
                 <p>
                   <b>SKU</b> {product.id}
@@ -75,11 +108,20 @@ const ProductDetails = () => {
                 <p>
                   <b>City</b> {product.city}
                 </p>
-                {cart && (
+                <p>
+                  <b>Category</b> {product.category}
+                </p>
+                <p>
+                  <b>Location</b>{" "}
+                  <a href={product.location} target="_blank">
+                    View on Google maps <FiExternalLink />
+                  </a>
+                </p>
+                {/* {cart && (
                   <div className={style.count}>
                     <button
                       className="--btn"
-                      onClick={() => decreaseCart(product)}
+                      // onClick={() => decreaseCart(product)}
                     >
                       -
                     </button>
@@ -88,32 +130,34 @@ const ProductDetails = () => {
                     </p>
                     <button
                       className="--btn"
-                      onClick={() => addToCart(product)}
+                      // onClick={() => addToCart(product)}
                     >
                       +
                     </button>
                   </div>
-                )}
+                )} */}
                 <button
                   className="--btn --btn-danger"
-                  onClick={() => addToCart(product)}
+                  onClick={() => checkLogin()}
                 >
-                  ADD TO CART
+                  {cart ? "REMOVE FROM FAVOURITES" : "ADD TO FAVOURITES"}
                 </button>
               </div>
             </div>
           </>
         )}
-          <h3>Product Reviews</h3>
-          <div>
-            {filteredReviews.length === 0 ? (<p>There are no reviews for this product yet</p>) :(
-              <>
-        <Card cardClass={style.card}>
-                {filteredReviews.map((item,index) => {
-                  const {rate,review,reviewDate,userName} = item
-                  return(
+        <h3>Venue Reviews</h3>
+        <div>
+          {filteredReviews.length === 0 ? (
+            <p>There are no reviews for this product yet</p>
+          ) : (
+            <>
+              <Card cardClass={style.card}>
+                {filteredReviews.map((item, index) => {
+                  const { rate, review, reviewDate, userName } = item;
+                  return (
                     <div className={style.review} key={index}>
-                      <StarsRating value={rate}/>
+                      <StarsRating value={rate} />
                       <p>{review}</p>
                       <span>
                         <b>{reviewDate}</b>
@@ -123,12 +167,12 @@ const ProductDetails = () => {
                         <b>By: {userName}</b>
                       </span>
                     </div>
-                  )
+                  );
                 })}
-            </Card>
-              </>
-            )}
-          </div>
+              </Card>
+            </>
+          )}
+        </div>
       </div>
     </section>
   );

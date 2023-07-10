@@ -25,9 +25,6 @@ export interface IFilter {
 
 export interface ICart {
   cartItems: IProducts[];
-  cartTotalQuantity: number;
-  cartTotalAmount: number;
-  previousUrl: string;
   isFavourite:false
 }
 

@@ -6,6 +6,8 @@ const initialState = {
   userName:null,
   password: null,
   userId: null,
+  previousURL:null,
+  product:null,
 };
 
 const authSlice = createSlice({
@@ -24,8 +26,16 @@ const authSlice = createSlice({
       state.userName= null;
       state.userId = null;
     },
+    addPrevURL:(state, {payload}) => {
+      state.previousURL = payload.url
+      state.product = payload.product
+    },
+    removePrevURL:(state) => {
+      state.previousURL = null
+      state.product = null
+    }
   },
 });
 
-export const { setUser, removeUser } = authSlice.actions;
+export const { setUser, removeUser, addPrevURL,removePrevURL } = authSlice.actions;
 export default authSlice.reducer;

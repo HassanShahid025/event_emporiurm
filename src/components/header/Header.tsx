@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import "./header.scss";
 import { Link, NavLink, useNavigate } from "react-router-dom";
-import { FaShoppingCart, FaTimes, FaUserCircle } from "react-icons/fa";
+import { FaTimes, FaUserCircle } from "react-icons/fa";
 import { HiOutlineMenuAlt3 } from "react-icons/hi";
 import { signOut, onAuthStateChanged } from "firebase/auth";
 import { auth } from "../../firebase/config";
@@ -15,7 +15,7 @@ import { ShowOnLogin, ShowOnLogout } from "../hiddenLinks/HiddenLinks";
 import AdminOnlyRoute, {
   AdminOnlyLinks,
 } from "../adminOnlyRoute/AdminOnlyRoute";
-import { calculate_CartTotalQuantity, calculate_cartTotalAmount } from "../../redux/features/cartSlice";
+
 
 const logo = (
   <div className="logo">
@@ -39,7 +39,7 @@ const Header = () => {
     (store: RootState) => store.auth
   );
 
-  const {cartTotalQuantity, cartItems} = useSelector((store:RootState) => store.cart)  
+  const { cartItems} = useSelector((store:RootState) => store.cart)  
 
   const dispatch = useDispatch();
 
@@ -88,15 +88,15 @@ const Header = () => {
       <NavLink to="/cart" className={activeLink}>
         Favourites
         {/* <FaShoppingCart size={20} /> */}
-        <p>{cartTotalQuantity}</p>
+        <p>{cartItems.length}</p>
       </NavLink>
     </span>
   );
 
-  useEffect(() => {
-    dispatch(calculate_cartTotalAmount())
-    dispatch(calculate_CartTotalQuantity())
-  },[cartItems])
+  // useEffect(() => {
+  //   dispatch(calculate_cartTotalAmount())
+  //   dispatch(calculate_CartTotalQuantity())
+  // },[cartItems])
 
   return (
     <>
