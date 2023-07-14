@@ -21,6 +21,7 @@ import CheckOutSuccessfull from "./pages/checkout/CheckOutSuccessfull";
 import OrderDetails from "./pages/orderDetails/OrderDetails";
 import ReviewProduct from "./components/reviewProduct/ReviewProduct";
 import NotFound from "./pages/notFound/NotFound";
+import ViewProfile from "./pages/viewProfile/ViewProfile";
 
 function App() {
 
@@ -33,6 +34,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/reset" element={<Reset />} />
+        <Route path="/view-profile/:userId" element={<ViewProfile />} />
         <Route path="/product-details/:id" element={<ProductDetails />} />
         <Route path="/cart" element={<Cart />} />
         <Route path="/checkout-details" element={<CheckoutDetails />} />
