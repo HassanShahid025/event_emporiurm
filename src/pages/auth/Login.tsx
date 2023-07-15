@@ -17,7 +17,7 @@ import spinnerImg from '../../assets/spinner.jpg'
 import { useDispatch } from "react-redux";
 import { removePrevURL, setUser } from "../../redux/features/authSlice";
 import { toggle_favourite } from "../../redux/features/cartSlice";
-import bcrypt from 'bcrypt';
+
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -46,7 +46,7 @@ const Login = () => {
   };
 
   const checkCredentiols = async(jsonData:any) => {
-    const isPasswordMatch = await bcrypt.compare(password, jsonData[0].password);
+    // const isPasswordMatch = await bcrypt.compare(password, jsonData[0].password);
         if(false){
           toast.error("Incorrect password")
         }
