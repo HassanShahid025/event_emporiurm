@@ -12,18 +12,42 @@ import { useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
 import spinnerImg from "../../assets/spinner.jpg";
 import { FaCogs } from "react-icons/fa";
+import { IProducts } from "../../types";
+import { toast } from "react-toastify";
 
 const Product = () => {
-  const { data, isLoading } = useFetchCollection("products");
+  // const { data, isLoading } = useFetchCollection("products");
+  const [ads, setAds] = useState<IProducts[]>([])
+  const [isLoading, setIsLoading] = useState(false)
+
+  const getAds = async () => {
+    setIsLoading(true)
+    try {
+      const response = await fetch("http://localhost:3000/ads");
+      const jsonData = await response.json();
+      setAds(jsonData);
+      console.log(jsonData);
+      setIsLoading(false)
+
+    } catch (error) {
+      setIsLoading(false)
+      console.log(error)
+    }
+  };
 
   const [showFilter, setShowFilter] = useState(false);
 
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(Store_Products({ products: data }));
-    dispatch(get_price_range({ products: data }));
-  }, [dispatch, data]);
+    getAds()
+    
+  }, [dispatch]);
+
+  useEffect(() => {
+    dispatch(Store_Products({ products: ads }));
+    dispatch(get_price_range({ products: ads }));
+  }, [dispatch,ads])
 
   const { products } = useSelector((store: RootState) => store.product);
 

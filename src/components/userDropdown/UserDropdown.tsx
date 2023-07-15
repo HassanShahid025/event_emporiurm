@@ -5,22 +5,17 @@ import { signOut } from "firebase/auth";
 import { auth } from "../../firebase/config";
 import { toast } from "react-toastify";
 import { Link, useNavigate } from "react-router-dom";
-import { FaUserCircle } from "react-icons/fa";
+import { FaUserAlt, FaListAlt, FaBuysellads } from "react-icons/fa";
+import { BiLogOut } from "react-icons/bi";
+import { AiFillHeart } from "react-icons/ai";
 import { useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
+import type { MenuProps } from "antd";
+import { Dropdown, Space } from "antd";
 
 const UserDropdown = () => {
-  const [isOpen, setIsOpen] = useState(false);
-  const { userName, userId } = useSelector((store: RootState) => store.auth);
+  const { userName, user_id } = useSelector((store: RootState) => store.auth);
   const navigate = useNavigate();
-
-  const toggleDropdown = () => {
-    setIsOpen(!isOpen);
-  };
-
-  const handleOptionClick = () => {
-    setIsOpen(false)
-  };
 
   const logoutUser = () => {
     signOut(auth)
@@ -33,28 +28,62 @@ const UserDropdown = () => {
       });
   };
 
-  return (
-    <div className="dropdown">
-      <div className="dropdown-items">
-        <FaUserCircle size={16} />
-        Hi, {userName}
-        {isOpen ? (
-          <MdKeyboardArrowUp size={25} onClick={toggleDropdown} />
-        ) : (
-          <MdKeyboardArrowDown size={25} onClick={toggleDropdown} />
-        )}
-      </div>
+  const items: MenuProps["items"] = [
+    {
+      key: "1",
+      label: <Link to={`/favourites/${user_id}`}>Favourites</Link>,
+      icon: <AiFillHeart />,
+    },
+    {
+      key: "2",
+      label: <Link to={`/view-profile/${user_id}`}>View and Edit profile</Link>,
+      icon: <FaUserAlt />,
+    },
+    {
+      key: "3",
+      label: (
+        <a
+          target="_blank"
+          rel="noopener noreferrer"
+          href="https://www.luohanacademy.com"
+        >
+          Todo List (disabled)
+        </a>
+      ),
+      icon: <FaListAlt />,
+      disabled: true,
+    },
+    {
+      key: "4",
+      label: (
+        <Link
+        to={`/my-ads/${user_id}`}
+         
+        >
+          My Ads
+        </Link>
+      ),
 
-      {isOpen && (
-        <ul className="dropdown__menu">
-          <Link to={`/favourites/${userId}`} onClick={handleOptionClick}><li>Favourites</li></Link>
-          <Link to="" onClick={handleOptionClick}><li>Logout</li></Link>
-          <Link to={`/view-profile/${userId}`} onClick={handleOptionClick}><li>View and Edit</li></Link>
-          <Link to={`/todo/${userId}`} onClick={handleOptionClick}><li >Todo List</li></Link>
-          <Link to={`/ads/${userId}`} onClick={handleOptionClick}><li >My Ads</li></Link>
-        </ul>
-      )}
-    </div>
+      icon: <FaBuysellads />,
+    },
+    {
+      key: "5",
+      danger: true,
+      label: "Logout",
+      icon: <BiLogOut />,
+      onClick : logoutUser
+    },
+  ];
+
+  return (
+    <Dropdown menu={{ items }}>
+      <a onClick={(e) => e.preventDefault()}>
+        <Space className="dropdown-items">
+          {userName}
+          <MdKeyboardArrowDown size={25} />
+        </Space>
+      </a>
+    </Dropdown>
   );
 };
 

@@ -38,6 +38,8 @@ header {
     width: 75%;
     display: flex;
     justify-content: space-between;
+    align-items: center;
+    height: 100%;
     ul {
       display: flex;
       justify-content: space-between;
@@ -61,6 +63,12 @@ header {
 
   .header-right {
     display: flex;
+    justify-content: space-between;
+    width: 30%;
+    .links{
+      display: flex;
+      align-items: center;
+    }
 
     .cart a {
       display: flex;

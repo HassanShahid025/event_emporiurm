@@ -17,12 +17,12 @@ const cartSlice = createSlice({
       const { product } = payload;
       console.log(product)
       const productIndex = state.cartItems.findIndex(
-        (item) => item.id === product.id
+        (item) => item.ad_id === product.id
       );
 
       if (productIndex >= 0) {
         const newCartItems = state.cartItems.filter(
-          (item) => item.id !== product.id
+          (item) => item.ad_id !== product.id
         );
         state.cartItems = newCartItems;
         toast.success(`${product.name} removed from favourites`, {

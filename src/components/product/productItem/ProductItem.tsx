@@ -4,9 +4,7 @@ import { IProducts } from "../../../types";
 import { Card } from "../../card/Card";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import {
-  toggle_favourite,
-} from "../../../redux/features/cartSlice";
+import { toggle_favourite } from "../../../redux/features/cartSlice";
 import { AiOutlineHeart, AiTwotoneHeart } from "react-icons/ai";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../redux/store";
@@ -22,10 +20,10 @@ interface IProductItem {
 
 const ProductItem = ({ product, grid }: IProductItem) => {
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
-  const { id, name, price, desc, imageURL, city } = product;
+  const { ad_id, name, price, ad_desc, images, city } = product;
   const { cartItems } = useSelector((store: RootState) => store.cart);
-  const { userId, isLoggedIn } = useSelector((store: RootState) => store.auth);
-  const isFavourite = cartItems.find((item) => item.id === id);
+  const { user_id, isLoggedIn } = useSelector((store: RootState) => store.auth);
+  const isFavourite = cartItems.find((item) => item.ad_id === ad_id);
 
   const shortingText = (text: string, n: number) => {
     if (text.length > n) {
@@ -43,18 +41,17 @@ const ProductItem = ({ product, grid }: IProductItem) => {
   //   dispatch(calculate_CartTotalQuantity());
 
   const checkLogin = () => {
-    if(isLoggedIn){
-      toggleFavourite()
-    }
-    else{
+    if (isLoggedIn) {
+      toggleFavourite();
+    } else {
       Notiflix.Confirm.show(
         "Login",
         "Login to add to favourites",
         "Login",
         "Cancel",
         function okCb() {
-          navigate("/login")
-          dispatch(addPrevURL({product,url:'/'}))
+          navigate("/login");
+          dispatch(addPrevURL({ product, url: "/" }));
         },
         function cancelCb() {
           console.log("cancel");
@@ -68,9 +65,7 @@ const ProductItem = ({ product, grid }: IProductItem) => {
         }
       );
     }
-   
   };
-
 
   const toggleFavourite = () => {
     dispatch(toggle_favourite({ product }));
@@ -80,16 +75,11 @@ const ProductItem = ({ product, grid }: IProductItem) => {
     setWindowWidth(windowWidth);
   }, [grid]);
 
- 
-
-  
-
-
   return (
     <Card cardClass={grid ? `${style.grid}` : `${style.list}`}>
-      <Link to={`/product-details/${id}`}>
+      <Link to={`/product-details/${ad_id}`}>
         <div className={style.img}>
-          <img src={imageURL![0]} alt={name} />
+          <img src={images![0]} alt={name} />
         </div>
       </Link>
       <div className={style.content}>
@@ -116,8 +106,8 @@ const ProductItem = ({ product, grid }: IProductItem) => {
         {!grid && (
           <p className={style.desc}>
             {windowWidth > 500
-              ? shortingText(desc!, 200)
-              : shortingText(desc!, 50)}
+              ? shortingText(ad_desc!, 200)
+              : shortingText(ad_desc!, 50)}
           </p>
         )}
         {/* <button

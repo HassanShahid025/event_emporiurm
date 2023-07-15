@@ -4,28 +4,28 @@ import { db } from "../firebase/config";
 import { toast } from "react-toastify";
 
 
-const useFetchDocument = (collectionName:string,documentID:string) => {
+const useFetchDocument = (collectionName:string,id:string) => {
 
     const [document,setDocument] = useState<any>(null)
+    console.log(id)
 
-  const getDocument = async () => {
-    const docRef = doc(db, collectionName, documentID!);
-    const docSnap = await getDoc(docRef);
-
-    if (docSnap.exists()) {
-      const obj = {
-        id: documentID,
-        ...docSnap.data(),
-      };
-      setDocument(obj);
-    } else {
-      toast.error("Document not found.");
-    }
-  };
+    const getDocument = async () => {
+      console.log("fetch")
+      try {
+        const response = await fetch(`http://localhost:3000/${collectionName}/${id}`);
+        const jsonData = await response.json();
+        setDocument(jsonData);
+        console.log(jsonData);
+      } catch (error) {
+        console.log(error)
+      }
+    };
+  
+  
 
   useEffect(() => {
     getDocument()
-  },[])
+  },[id])
 
   return{
     document

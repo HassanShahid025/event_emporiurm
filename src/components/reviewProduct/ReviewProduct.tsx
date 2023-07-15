@@ -18,7 +18,7 @@ const ReviewProduct = () => {
   const [product, setProduct] = useState<IProducts | null>(null);
   const { id } = useParams();
 
-  const { userId, userName } = useSelector((store: RootState) => store.auth);
+  const { user_id, userName } = useSelector((store: RootState) => store.auth);
   const { products } = useSelector((store: RootState) => store.product);
   const { document } = useFetchDocument("products", id!);
   useEffect(() => {
@@ -31,7 +31,7 @@ const ReviewProduct = () => {
     const today = new Date();
     const date = today.toDateString();
     const reviewConfig = {
-      userId,
+      user_id,
       userName,
       productID: id,
       rate,
@@ -55,11 +55,9 @@ const ReviewProduct = () => {
       <div className={`container ${style.review}`}>
         <h2>Review Product</h2>
         {product === null ? (
-         <div className="loading-container">
-         <img
-            src={spinnerImg}
-          />
-      </div>
+          <div className="loading-container">
+            <img src={spinnerImg} />
+          </div>
         ) : (
           <>
             <p>

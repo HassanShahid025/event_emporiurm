@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import styles from "./addProduct.module.scss";
 import { Card } from "../../card/Card";
 import { IProducts } from "../../../types";
@@ -16,46 +16,87 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../redux/store";
 import spinnerImg from "../../../assets/spinner.jpg";
+import { useDispatch } from "react-redux";
+import { Store_Products } from "../../../redux/features/productSlice";
+import Notiflix from "notiflix";
+import useFetchCollection from "../../../customHooks/useFetchCollection";
 
 const categories = [
   {
     id: 1,
+    name: "Venue",
+  },
+  {
+    id: 2,
+    name: "Photography",
+  },
+  {
+    id: 3,
+    name: "Food Catering",
+  },
+  {
+    id: 4,
+    name: "Decoration",
+  },
+];
+
+const venueCategories = [
+  {
+    id: 5,
     name: "Outdoor",
   },
   {
-    id: 2,
+    id: 6,
     name: "Indoor",
-  }
+  },
 ];
 const cities = [
   {
-    id: 1,
+    id: 7,
     name: "Karachi",
   },
   {
-    id: 2,
+    id: 8,
     name: "Lahore",
   },
   {
-    id: 2,
-    name: "Islamabad"
-  }
+    id: 9,
+    name: "Islamabad",
+  },
 ];
 
 const initialState = {
   name: "",
-  imageURL: [],
+  images: [],
   price: 0,
   city: "",
   location: "",
   category: "",
-  desc: "",
+  venue_category: "",
+  ad_desc: "",
+  ad_date: "",
 };
 
 const AddProduct = () => {
+  const { user_id } = useSelector((store: RootState) => store.auth);
   const { id } = useParams();
+
+  const [date, setDate] = useState("");
+
+  const dispatch = useDispatch();
+ 
+
+  useEffect(() => {
+    const todaydate = new Date();
+    const year = String(todaydate.getFullYear());
+    const month = String(todaydate.getMonth() + 1).padStart(2, "0");
+    const day = String(todaydate.getDate()).padStart(2, "0");
+    setDate(`${year}-${month}-${day}`);
+  }, []);
+  
   const { products } = useSelector((store: RootState) => store.product);
-  const productEdit = products.find((item) => item.id === id);
+
+  const productEdit = products.find((item) => item.ad_id == id);
 
   const [product, setProduct] = useState<IProducts>(() => {
     const newState = detectForm(id!, { ...initialState }, productEdit);
@@ -75,51 +116,77 @@ const AddProduct = () => {
 
   const navigate = useNavigate();
 
-  const editProduct = (e: any) => {
-    e.preventDefault();
+  const editProduct = async () => {
     setIsLoading(true);
-
     try {
-      setDoc(doc(db, "products", id!), {
-        name: product.name,
-        imageURL: product.imageURL,
-        price: Number(product.price),
-        category: product.category,
-        desc: product.desc,
-        createdAt: productEdit?.createdAt,
-        editedAt: Timestamp.now().toDate(),
+      const {
+        name,
+        images,
+        price,
+        city,
+        location,
+        category,
+        venue_category,
+        ad_desc,
+        ad_date,
+      } = product;
+      const body = {
+        name,
+        images,
+        price,
+        city,
+        location,
+        category,
+        venue_category,
+        ad_desc,
+        ad_date,
+        user_id,
+      };
+      const response = await fetch(`http://localhost:3000/ads/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
       });
-
-      // for(let i=0; i<4; i++){
-      //   if(!productEdit?.imageURL?.includes(product.imageURL![i])){
-      //     const storageRef = ref(storage, productEdit?.imageURL);
-      //   deleteObject(storageRef);
-      //   }
-      // }
-
-
-      // if (product.imageURL !== productEdit?.imageURL) {
-      //   const storageRef = ref(storage, productEdit?.imageURL);
-      //   deleteObject(storageRef);
-      // }
-
-      setIsLoading(false);
-      toast.success("Venue edited successfully.");
-      navigate("/admin/all-products");
-    } catch (error: any) {
-      setIsLoading(false);
-      toast.error(error.message);
+      setProduct(initialState)
+      toast.success("Ad edited successfully")
+      navigate(`/my-ads/${user_id}`)
+    } catch (error) {
+      toast.error("Error Occured")
     }
   };
 
-  const handelInputChange= (e: any) => {
+  const editModal = (e:any) => {
+    e.preventDefault();
+
+    Notiflix.Confirm.show(
+      "Edit Ad",
+      "You are about to edit this ad?",
+      "Edit",
+      "Cancel",
+      function okCb() {
+        editProduct()
+      },
+      function cancelCb() {
+        console.log("cancel");
+      },
+      {
+        width: "320px",
+        borderRadius: "8px",
+        titleColor: "#f7c17b",
+        okButtonBackground: "#f7c17b",
+        cssAnimationStyle: "zoom",
+      }
+    );
+  }
+
+  const handelInputChange = (e: any) => {
     const { name, value } = e.target;
     setProduct({ ...product, [name]: value });
   };
 
-  const setImageURL = (downloadURL:string) => {
-      setProduct({ ...product, imageURL: [...product.imageURL!, downloadURL] });
-  }
+  const setImageURL = (downloadURL: string) => {
+    setProduct({ ...product, images: [...product.images!, downloadURL] });
+  };
   const handelImageChange = (e: any) => {
     const file = e.target.files[0];
     const storageRef = ref(storage, `eshop/${Date.now()}${file.name}`);
@@ -137,192 +204,262 @@ const AddProduct = () => {
       },
       () => {
         getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-          setImageURL(downloadURL)
+          setImageURL(downloadURL);
           toast.success("Image uploaded successfully.");
         });
       }
     );
   };
 
-  const addProduct = (e: any) => {
+  const addProduct = async (e: any) => {
+    console.log("date:", date);
+    setProduct({ ...product, ad_date: date });
+    console.log("ad date:", product.ad_date);
     e.preventDefault();
     setIsLoading(true);
+
     try {
-      const docRef = addDoc(collection(db, "products"), {
-        name: product.name,
-        imageURL: product.imageURL,
-        city: product.city,
-        location: product.location,
-        price: Number(product.price),
-        category: product.category,
-        desc: product.desc,
-        createdAt: Timestamp.now().toDate().toDateString(),
+      const {
+        name,
+        images,
+        price,
+        city,
+        location,
+        category,
+        venue_category,
+        ad_desc,
+        ad_date,
+      } = product;
+      const body = {
+        name,
+        images,
+        price,
+        city,
+        location,
+        category,
+        venue_category,
+        ad_desc,
+        ad_date,
+        user_id,
+      };
+
+      const response = await fetch("http://localhost:3000/ads", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
       });
-      setIsLoading(false);
-      setProduct(initialState);
-      toast.success("Venue added successfully.");
-    } catch (error: any) {
-      setIsLoading(false);
-      toast.error(error.message);
+      setProduct({ ...initialState });
+      setIsLoading(true);
+      toast.success("AD added");
+    } catch (error) {
+      setIsLoading(true);
+      console.log(error);
+      toast.error("error");
     }
   };
 
   return (
     <>
       {isLoading && (
-         <img
-         src={spinnerImg}
-         alt="Loading.."
-         style={{ width: "50px" }}
-         className="--center-all"
-       />
+        <img
+          src={spinnerImg}
+          alt="Loading.."
+          style={{ width: "50px" }}
+          className="--center-all"
+        />
       )}
-      <div className={styles.product}>
-        <h2>{detectForm(id!, "Add Venue", "Edit Venue")}</h2>
-        <Card cardClass={styles.card}>
-          <form onSubmit={detectForm(id!, addProduct, editProduct)}>
-            <label>Venue name:</label>
-            <input
-              type="text"
-              placeholder="Venue name"
-              required
-              name="name"
-              value={product.name}
-              onChange={(e) => handelInputChange(e)}
-            />
-
-            <label>Venue images:</label>
-            <Card className={styles.group}>
-              {uploadProgress === 0 ? null : (
-                <div className={styles.progress}>
-                  <div
-                    className={styles["progress-bar"]}
-                    style={{ width: `${uploadProgress}%` }}
-                  >
-                    {uploadProgress < 100
-                      ? `Uploading ${Math.ceil(uploadProgress)}%`
-                      : "Image uploaded"}
+      <section>
+        <div className="container">
+          <div className={styles.product}>
+            <h2>{detectForm(id!, "Create Ad", "Edit Ad")}</h2>
+            <Card cardClass={styles.card}>
+              <form onSubmit={detectForm(id!, addProduct, editModal)}>
+                <div className={styles.flex}>
+                  <div>
+                    <label>Name:</label>
+                    <input
+                      type="text"
+                      placeholder="Name"
+                      required
+                      name="name"
+                      value={product.name}
+                      onChange={(e) => handelInputChange(e)}
+                    />
+                  </div>
+                  <div>
+                    <label>Price:</label>
+                    <input
+                      type="number"
+                      placeholder="Product price"
+                      required
+                      name="price"
+                      value={product.price}
+                      onChange={(e) => handelInputChange(e)}
+                    />
                   </div>
                 </div>
-              )}
 
-              <input
-                type="file"
-                name="image"
-                accept="image/*"
-                placeholder="Venue Image"
-                onChange={(e) => handelImageChange(e)}
-              />
-              {product.imageURL![0] !== "" ? (
+                <label>Images:</label>
+                {/* <Card className={styles.group}> */}
+                {uploadProgress === 0 ? null : (
+                  <div className={styles.progress}>
+                    <div
+                      className={styles["progress-bar"]}
+                      style={{ width: `${uploadProgress}%` }}
+                    >
+                      {uploadProgress < 100
+                        ? `Uploading ${Math.ceil(uploadProgress)}%`
+                        : "Image uploaded"}
+                    </div>
+                  </div>
+                )}
+
+                <input
+                  type="file"
+                  name="image"
+                  accept="image/*"
+                  placeholder="Venue Image"
+                  onChange={(e) => handelImageChange(e)}
+                />
+
                 <input
                   type="text"
                   // required
                   placeholder="Image URL"
                   name="imageURL"
                   disabled
-                  value={product.imageURL![0]}
+                  value={product.images![0]}
                 />
-              ) : null}
-              {product.imageURL![1] !== "" ? (
+
                 <input
                   type="text"
                   // required
                   placeholder="Image URL"
                   name="imageURL"
                   disabled
-                  value={product.imageURL![1]}
+                  value={product.images![1]}
                 />
-              ) : null}
-              {product.imageURL![2] !== "" ? (
+
                 <input
                   type="text"
                   // required
                   placeholder="Image URL"
                   name="imageURL"
                   disabled
-                  value={product.imageURL![2]}
+                  value={product.images![2]}
                 />
-              ) : null}
-              {product.imageURL![3] !== "" ? (
+
                 <input
                   type="text"
                   // required
                   placeholder="Image URL"
                   name="imageURL"
                   disabled
-                  value={product.imageURL![3]}
+                  value={product.images![3]}
                 />
-              ) : null}
+
+                {/* </Card> */}
+
+                <div className={styles.flex}>
+                  <div>
+                    <label>Location:</label>
+                    <input
+                      type="text"
+                      placeholder="Product location"
+                      required
+                      name="location"
+                      value={product.location}
+                      onChange={(e) => handelInputChange(e)}
+                    />
+                  </div>
+                  <div>
+                    <label>City</label>
+                    <select
+                      required
+                      name="city"
+                      value={product.city}
+                      onChange={(e) => handelInputChange(e)}
+                    >
+                      <option value="" disabled>
+                        -- Choose City --
+                      </option>
+                      {cities.map((city) => {
+                        return (
+                          <option value={city.name} key={city.id}>
+                            {city.name}
+                          </option>
+                        );
+                      })}
+                    </select>
+                  </div>
+                </div>
+
+                <div className={styles.flex}>
+                  <div>
+                    <label>Category</label>
+                    <select
+                      required
+                      name="category"
+                      value={product.category}
+                      onChange={(e) => handelInputChange(e)}
+                    >
+                      <option value="" disabled>
+                        -- Choose Category --
+                      </option>
+                      {categories.map((cat) => {
+                        return (
+                          <option value={cat.name} key={cat.id}>
+                            {cat.name}
+                          </option>
+                        );
+                      })}
+                    </select>
+                  </div>
+                  <div>
+                    {product.category === "Venue" && (
+                      <>
+                        <label>Venue Category</label>
+                        <select
+                          required
+                          name="venue_category"
+                          value={product.venue_category}
+                          onChange={(e) => handelInputChange(e)}
+                        >
+                          <option value="" disabled>
+                            -- Choose Venue Category --
+                          </option>
+                          {venueCategories.map((cat) => {
+                            return (
+                              <option value={cat.name} key={cat.id}>
+                                {cat.name}
+                              </option>
+                            );
+                          })}
+                        </select>
+                      </>
+                    )}
+                  </div>
+                </div>
+                <div>
+                  <label>Venue description</label>
+                  <textarea
+                    name="ad_desc"
+                    required
+                    value={product.ad_desc}
+                    cols={30}
+                    rows={10}
+                    onChange={(e) => handelInputChange(e)}
+                  ></textarea>
+                </div>
+
+                <button className="--btn --btn-primary">
+                  {detectForm(id!, "Post Ad", "Edit Ad")}
+                </button>
+              </form>
             </Card>
-            <label>Venue price:</label>
-            <input
-              type="number"
-              placeholder="Product price"
-              required
-              name="price"
-              value={product.price}
-              onChange={(e) => handelInputChange(e)}
-            />
-            <label>Venue location:</label>
-            <input
-              type="text"
-              placeholder="Product location"
-              required
-              name="location"
-              value={product.location}
-              onChange={(e) => handelInputChange(e)}
-            />
-            <label>Venue category</label>
-            <select
-              required
-              name="category"
-              value={product.category}
-              onChange={(e) => handelInputChange(e)}
-            >
-              <option value="" disabled>
-                -- Choose Product Category --
-              </option>
-              {categories.map((cat) => {
-                return (
-                  <option value={cat.name} key={cat.id}>
-                    {cat.name}
-                  </option>
-                );
-              })}
-            </select>
-            <label>Venue city</label>
-            <select
-              required
-              name="city"
-              value={product.city}
-              onChange={(e) => handelInputChange(e)}
-            >
-              <option value="" disabled>
-                -- Choose Venue City --
-              </option>
-              {cities.map((cat) => {
-                return (
-                  <option value={cat.name} key={cat.id}>
-                    {cat.name}
-                  </option>
-                );
-              })}
-            </select>
-            <label>Venue description</label>
-            <textarea
-              name="desc"
-              required
-              value={product.desc}
-              cols={30}
-              rows={10}
-              onChange={(e) => handelInputChange(e)}
-            ></textarea>
-            <button className="--btn --btn-primary">
-              {detectForm(id!, "Save Venue", "Edit Venue")}
-            </button>
-          </form>
-        </Card>
-      </div>
+          </div>
+        </div>
+      </section>
     </>
   );
 };

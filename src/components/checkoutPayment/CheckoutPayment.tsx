@@ -29,12 +29,14 @@ const CheckoutPayment = () => {
   const [card, setCard] = useState({ ...initialCardData });
   const [isExpiry, setIsExpiry] = useState(false);
 
-  const {email,userId} = useSelector((store:RootState) => store.auth)
-  const {cartItems,cartTotalAmount} = useSelector((store:RootState) => store.cart)
-  const {shippingAddress} = useSelector((store:RootState) => store.checkout)
+  const { email, user_id } = useSelector((store: RootState) => store.auth);
+  const { cartItems, cartTotalAmount } = useSelector(
+    (store: RootState) => store.cart
+  );
+  const { shippingAddress } = useSelector((store: RootState) => store.checkout);
 
   const navigate = useNavigate();
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
 
   const handlePaymentOptionChange = (e: any) => {
     setPaymentOption(e.target.value);
@@ -48,21 +50,22 @@ const CheckoutPayment = () => {
     let { name, value } = e.target;
 
     if (name === "cardNumber") {
-      const outputString = value.replace(/(\d{4})|[^0-9]/g, (match:any, group1:any) => {
-        if (group1) {
-          return group1 + " "; // Add a space after every four digits
-        } else {
-          return ""; // Remove non-digit characters
+      const outputString = value.replace(
+        /(\d{4})|[^0-9]/g,
+        (match: any, group1: any) => {
+          if (group1) {
+            return group1 + " "; // Add a space after every four digits
+          } else {
+            return ""; // Remove non-digit characters
+          }
         }
-      });
+      );
       setCard({ ...card, [name]: outputString });
-    }
-    else if(name ==="cvc" || name === "zip"){
-      console.log("gdfggf")
-      value = value.replace(/[^0-9]/g, "")
+    } else if (name === "cvc" || name === "zip") {
+      console.log("gdfggf");
+      value = value.replace(/[^0-9]/g, "");
       setCard({ ...card, [name]: value });
-    }
-    else {
+    } else {
       setCard({ ...card, [name]: value });
     }
   };
@@ -113,7 +116,6 @@ const CheckoutPayment = () => {
     }
   };
 
-
   const formatExpiryInput = (event: any) => {
     const inputChar = String.fromCharCode(event.keyCode);
     const code = event.keyCode;
@@ -151,7 +153,7 @@ const CheckoutPayment = () => {
         /\/\//g,
         "/" // Prevent entering more than 1 `/`
       );
-      setCard({...card, expiration:event.target.value})
+    setCard({ ...card, expiration: event.target.value });
   };
 
   const handleSubmit = () => {
@@ -159,21 +161,21 @@ const CheckoutPayment = () => {
     const date = today.toDateString();
     const time = today.toLocaleTimeString();
     const orderConfig = {
-      userId,
+      user_id,
       email,
-      orderDate:date,
-      orderTime:time,
+      orderDate: date,
+      orderTime: time,
       orderAmount: cartTotalAmount,
-      orderStatus:"Order Placed...",
+      orderStatus: "Order Placed...",
       cartItems,
       shippingAddress,
-      createdAt:Timestamp.now().toDate()
+      createdAt: Timestamp.now().toDate(),
     };
 
     try {
       addDoc(collection(db, "orders"), orderConfig);
-      dispatch(clear_cart())
-      toast.success("You order has been placed successfully")
+      dispatch(clear_cart());
+      toast.success("You order has been placed successfully");
       navigate("/checkout-success");
     } catch (error: any) {
       toast.error(error.message);
@@ -207,7 +209,6 @@ const CheckoutPayment = () => {
         <img src={cardImg} alt="card" />
       </div>
 
-  
       <div className={style.inputBox}>
         <span>Name on card</span>
         <input

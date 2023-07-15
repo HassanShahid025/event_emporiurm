@@ -19,8 +19,9 @@ import Pagination from "../../pagination/Pagination";
 import spinnerImg from '../../../assets/spinner.jpg'
 
 const ViewProducts = () => {
-  const { data, isLoading } = useFetchCollection("products");
+  const { data, isLoading } = useFetchCollection("ads");
   const [search, setSearch] = useState("");
+  console.log(data)
 
   const { filteredProducts } = useSelector((store: RootState) => store.filter);
   const { products } = useSelector((store: RootState) => store.product);
@@ -121,13 +122,13 @@ const ViewProducts = () => {
             </thead>
             <tbody>
               {currentProducts.map((product, index) => {
-                const { id, name, imageURL, price, category } = product;
+                const { ad_id, name, images, price, category } = product;
                 return (
-                  <tr key={id}>
+                  <tr key={ad_id}>
                     <td>{index + 1}</td>
                     <td>
                       <img
-                        src={imageURL}
+                        src={images![0]}
                         alt={name}
                         style={{ width: "100px" }}
                       />
@@ -136,14 +137,14 @@ const ViewProducts = () => {
                     <td>{category}</td>
                     <td>{`$${price}`}</td>
                     <td className="icons">
-                      <Link to={`/admin/add-product/${id}`}>
+                      <Link to={`/admin/add-product/${ad_id}`}>
                         <FaEdit color="green" size={20} />
                       </Link>
                       &nbsp;
                       <FaTrashAlt
                         color="red"
                         size={18}
-                        onClick={() => confirmDelete(id!, imageURL!)}
+                        onClick={() => confirmDelete(ad_id!, images![0])}
                       />
                     </td>
                   </tr>

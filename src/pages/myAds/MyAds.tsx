@@ -1,38 +1,75 @@
 import { useSelector } from "react-redux";
-import style from "./cart.module.scss";
+import style from "./myAds.module.scss";
 import { RootState } from "../../redux/store";
 import { Link, useNavigate } from "react-router-dom";
 import { IProducts } from "../../types";
-import { FaTrashAlt } from "react-icons/fa";
+import { FaTrashAlt,FaEdit } from "react-icons/fa";
 import { useDispatch } from "react-redux";
 import { clear_cart, toggle_favourite } from "../../redux/features/cartSlice";
 import Notiflix from "notiflix";
+import useFetchDocument from "../../customHooks/useFetchDocument";
+import { useEffect, useState } from "react";
+import { toast } from "react-toastify";
+import { Store_Products } from "../../redux/features/productSlice";
 
 
-const Cart = () => {
+const MyAds = () => {
   const { cartItems} = useSelector(
     (store: RootState) => store.cart
   );
-  const { isLoggedIn } = useSelector((store: RootState) => store.auth);
+  const { user_id } = useSelector((store: RootState) => store.auth);
+  const {document} = useFetchDocument("myads" , user_id!)
+  const [ads, setAds] = useState<IProducts[]>([]);
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  // const increaseCart = (cart: IProducts) => {
-  //   dispatch(add_to_cart({ product: cart }));
-  // };
-  // const decreaseCart = (cart: IProducts) => {
-  //   dispatch(decrease_cart({ product: cart }));
-  // };
+  const getAds = async () => {
+    console.log("")
+    try {
+      const response = await fetch("http://localhost:3000/ads");
+      const jsonData = await response.json();
+      dispatch(Store_Products({products:jsonData}))
+      console.log(jsonData);
 
-  const deleteCartItem = (cart: IProducts) => {
+    } catch (error) {
+      console.log(error)
+    }
+  };
+
+  useEffect(() => {
+    getAds()
+  },[dispatch])
+
+  useEffect(() => {
+    if(document !== null){
+      setAds(document)
+    }
+  },[document,user_id])
+
+  console.log(ads)
+
+  const deleteItem = async (id: string) => {
+    try {
+      const deleteAd = await fetch(`http://localhost:3000/ads/${id}`, {
+        method: "DELETE",
+      });
+      setAds(prevAds => prevAds.filter(ad => ad.ad_id !== id))
+   toast.success("Ad deleted")
+    } catch (error) {
+      toast.error("error occured while deleting")
+    }
+  };
+
+
+  const deleteAd = (ad: IProducts) => {
     Notiflix.Confirm.show(
       "Remove Venue",
-      "You are about to remove this venue from favourites?",
-      "Remove",
+      "You are about to delete this ad?",
+      "Delete",
       "Cancel",
       function okCb() {
-        dispatch(toggle_favourite({ product: cart }));
+        deleteItem(ad.ad_id!)
       },
       function cancelCb() {
         console.log("cancel");
@@ -46,6 +83,10 @@ const Cart = () => {
       }
     );
   };
+
+  const editAd = (ad_id:string) => {
+      navigate(`/add-product/${ad_id}`)
+  }
 
   const clearCart = () => {
     Notiflix.Confirm.show(
@@ -69,30 +110,24 @@ const Cart = () => {
     );
   };
 
-  // useEffect(() => {
-  //   dispatch(calculate_cartTotalAmount());
-  //   dispatch(calculate_CartTotalQuantity());
-  //   dispatch(save_url(""));
-  // }, [cartItems]);
+  function formatDate(dateString:string) {
+    const dateObj = new Date(dateString);
+    
+    const day = String(dateObj.getDate()).padStart(2, '0');
+    const month = String(dateObj.getMonth() + 1).padStart(2, '0'); // Months are zero-based
+    const year = dateObj.getFullYear();
+  
+    return `${day}-${month}-${year}`;
+  }
 
-  const url = window.location.href;
-
-  // const checkout = () => {
-  //   if (isLoggedIn) {
-  //     navigate("/checkout-details");
-  //   } else {
-  //     dispatch(save_url(url));
-  //     navigate("/login");
-  //   }
-  // };
 
   return (
     <section>
       <div className={`container ${style.table}`}>
-        <h2>Favourites</h2>
-        {cartItems.length === 0 ? (
+        <h2>Your Ads</h2>
+        {ads.length === 0 ? (
           <>
-            <p>You have no favourites.</p>
+            <p>You have no ads.</p>
             <br />
             <div>
               <Link to="/#products">&larr; Continue browsing</Link>
@@ -104,16 +139,17 @@ const Cart = () => {
               <thead>
                 <tr>
                   <th>s/n</th>
-                  <th>Venues</th>
+                  <th>Ads</th>
                   <th>Price</th>
                   <th>Category</th>
-                  <th>Total</th>
+                  <th>Date</th>
                   <th>Actions</th>
                 </tr>
               </thead>
               <tbody>
-                {cartItems.map((cart: IProducts, index: number) => {
-                  const { ad_id, name, price, images, cartQuantiy,category } = cart;
+                {ads.map((ad: IProducts, index: number) => {
+                  const { ad_id, name, price, images, cartQuantiy,category,ad_date } = ad;
+                  const formattedDate = formatDate(ad_date!)
                   return (
                     <tr key={ad_id}>
                       <td>{index + 1}</td>
@@ -150,12 +186,19 @@ const Cart = () => {
                           </button>
                         </div> */}
                       </td>
-                      <td>{(price! * cartQuantiy!).toFixed(2)}</td>
+                      <td>{formattedDate}</td>
                       <td className={style.icons}>
+                        <FaEdit
+                        size={18}
+                        color="green"
+                        title="Edit"
+                        onClick={() => editAd(ad_id!)}
+                        />
                         <FaTrashAlt
                           size={18}
                           color="red"
-                          onClick={() => deleteCartItem(cart)}
+                          title="Delete"
+                          onClick={() => deleteAd(ad)}
                         />
                       </td>
                     </tr>
@@ -197,4 +240,4 @@ const Cart = () => {
   );
 };
 
-export default Cart;
+export default MyAds;

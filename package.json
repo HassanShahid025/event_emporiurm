@@ -9,12 +9,14 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@ant-design/icons": "^5.1.4",
     "@emailjs/browser": "^3.11.0",
     "@reduxjs/toolkit": "^1.9.3",
     "@stripe/react-stripe-js": "^2.1.0",
     "@stripe/stripe-js": "^1.52.0",
     "@types/react-redux": "^7.1.25",
     "antd": "^5.6.4",
+    "bcrypt": "^5.1.0",
     "cors": "^2.8.5",
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
@@ -35,6 +37,7 @@
     "stripe": "^11.17.0"
   },
   "devDependencies": {
+    "@types/bcrypt": "^5.0.0",
     "@types/react": "^18.0.27",
     "@types/react-dom": "^18.0.10",
     "@types/react-input-mask": "^3.0.2",

@@ -4,8 +4,8 @@ import style from "./Productfilter.module.scss";
 import { RootState } from "../../../redux/store";
 import { useDispatch } from "react-redux";
 import {
-  filter_by_brand,
   filter_by_category,
+  filter_by_city,
   filter_by_price,
 } from "../../../redux/features/filterSlice";
 
@@ -14,8 +14,9 @@ const ProductFilter = () => {
     (store: RootState) => store.product
   );  
   const [category, setCategory] = useState("All");
-  const [brand, setBrand] = useState("All");
   const [price, setPrice] = useState(3000);
+  const [city, setCity] = useState("");
+  const [allCities, setAllCities] = useState<string[]>([])
 
   const dispatch = useDispatch();
 
@@ -24,54 +25,41 @@ const ProductFilter = () => {
     ...new Set(products.map((product) => product.category)),
   ];
 
-  // const allBrands= [
-  //   "All",
-  //   ...new Set(products.map((product) => product.brand)),
-  // ];
 
-  // useEffect(() => {
-  //   dispatch(filter_by_brand({products,brand}))
-  // },[brand,products])
-
-  let allCities: string[] = [];
-  const getBrands = (cat: string) => {
+  // let allCities: string[] = [];
+  const getCities = (cat: string) => {
     if (cat === "All") {
-      allCities = [
-        "All",
-        ...new Set(products.map((product) => product.city!)),
-      ];
+      const adCity = new Set(products.map((product) => product.city!))
+      setAllCities(["All",...adCity])
+     
+      
     } else {
-      allCities = ["All"];
       products.forEach((product) => {
         if (product.category === cat && !allCities.includes(product.city!)) {
-          allCities.push(product.city!);
+          setAllCities([...allCities,product.city!])
         }
       });
     }
-    return allCities.map((city) => {
-      return <option value={city}>{city}</option>;
-    });
   };
   useEffect(() => {
-    getBrands(category);
-    dispatch(filter_by_brand({ products, brand, category }));
-  }, [brand, category, products]);
+    getCities(category);
+    dispatch(filter_by_city({ products, city, category }));
+  }, [city, category, products]);
 
   useEffect(() => {
     dispatch(filter_by_price({ products, price }));
     setCategory("All")
-    setBrand("All")
   }, [price, products]);
 
   const filterProducts = (cat: string) => {
     setCategory(cat);
-    setBrand("All");
+ 
     dispatch(filter_by_category({ products, category: cat }));
   };
 
   const clearFilters = () => {
     setCategory("All")
-    setBrand("All")
+  
     setPrice(maxPrice!)
   }
 
@@ -94,16 +82,16 @@ const ProductFilter = () => {
       </div>
       <h4>City</h4>
       <div className={style.brand}>
-        <select value={brand} onChange={(e: any) => setBrand(e.target.value)}>
-          {getBrands(category)}
-          {/* {allBrands.map((brand, index) => {
+         <select value={city} onChange={(e: any) => setCity(e.target.value)}>
+          
+          {allCities.map((city, index) => {
             return (
-              <option key={index} value={brand}>
-                {brand}
+              <option key={index} value={city}>
+                {city}
               </option>
             );
-          })} */}
-        </select>
+          })} 
+         </select> 
         <h4>Price</h4>
         <p>${price}</p>
         <div className={style.price}>

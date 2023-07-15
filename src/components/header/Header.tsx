@@ -35,7 +35,7 @@ const Header = () => {
   const [showMenu, setShowMenu] = useState(false);
   const [name, setName] = useState<string | null>("");
 
-  const { userName, isLoggedIn } = useSelector(
+  const { userName, isLoggedIn, user_id } = useSelector(
     (store: RootState) => store.auth
   );
 
@@ -51,7 +51,7 @@ const Header = () => {
           setName(user.displayName!.split(" ")[0]);
         }
         dispatch(
-          setUser({ email: user.email, userName: name, userId: user.uid })
+          setUser({ email: user.email, userName: name, user_id: user.uid })
         );
       } else {
         setName("");
@@ -144,9 +144,11 @@ const Header = () => {
                     to="#"
                     style={{ color: "#f7c17b", borderBottom: "none" }}
                   >
-                    
-                      <UserDropdown />
+                    <UserDropdown />
                   </Link>
+                  <NavLink to={"/add-product/ADD"} className={activeLink}>
+                    Post an Ad
+                  </NavLink>
                   {/* <NavLink to="/order-history" className={activeLink}>
                     My Orders
                   </NavLink> */}
@@ -155,12 +157,12 @@ const Header = () => {
                   </NavLink> */}
                 </ShowOnLogin>
               </span>
-              {cart}
+              {/* {cart} */}
             </div>
           </nav>
 
           <div className="menu-icon">
-            {cart}
+            {/* {cart} */}
             <HiOutlineMenuAlt3 size={28} onClick={toggleMenu} />
           </div>
         </div>

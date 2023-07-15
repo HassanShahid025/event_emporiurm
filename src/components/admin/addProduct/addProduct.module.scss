@@ -1,14 +1,26 @@
 .product {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center ;
     .card {
       width: 100%;
-      max-width: 500px;
+      height: 100%;
+      // max-width: 500px;
       padding: 1rem;
+      .flex{
+        display: flex;
+        justify-content: space-between;
+        div{
+          width: 100%;
+        }
+      }
     }
     form {
       label {
-        display: block;
         font-size: 1.4rem;
         font-weight: 500;
+        display: block;
       }
       input[type="text"],
       input[type="number"],
@@ -17,12 +29,12 @@
       select,
       textarea,
       input[type="password"] {
-        display: block;
+        // display: block;
         font-size: 1.6rem;
         font-weight: 300;
         padding: 1rem;
         margin: 1rem auto;
-        width: 100%;
+        width: 95%;
         border: 1px solid #777;
         border-radius: 3px;
         outline: none;
@@ -36,6 +48,7 @@
         background-color: #aaa;
         border: 1px solid transparent;
         border-radius: 10px;
+        width: 95%;
         .progress-bar {
           background-color: var(--light-blue);
           border: 1px solid transparent;
@@ -52,4 +65,14 @@
   .group {
     border: 1px solid var(--dark-blue);
     padding: 5px;
+  }
+
+  @media screen and (max-width: 700px){
+    .flex{
+      display: flex;
+      flex-direction: column;
+      div{
+        width: 100%;
+      }
+    }
   }

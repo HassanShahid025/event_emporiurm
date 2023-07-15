@@ -22,9 +22,10 @@ import OrderDetails from "./pages/orderDetails/OrderDetails";
 import ReviewProduct from "./components/reviewProduct/ReviewProduct";
 import NotFound from "./pages/notFound/NotFound";
 import ViewProfile from "./pages/viewProfile/ViewProfile";
+import AddProduct from "./components/admin/addProduct/AddProduct";
+import MyAds from "./pages/myAds/MyAds";
 
 function App() {
-
   return (
     <>
       <Header />
@@ -34,9 +35,11 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/reset" element={<Reset />} />
-        <Route path="/view-profile/:userId" element={<ViewProfile />} />
+        <Route path="/view-profile/:user_id" element={<ViewProfile />} />
         <Route path="/product-details/:id" element={<ProductDetails />} />
-        <Route path="/cart" element={<Cart />} />
+        <Route path="/favourites/:id" element={<Cart />} />
+        <Route path="/add-product/:id" element={<AddProduct />} />
+        <Route path="/my-ads/:id" element={<MyAds />} />
         <Route path="/checkout-details" element={<CheckoutDetails />} />
         <Route path="/checkout" element={<Checkout />} />
         <Route path="/checkout-success" element={<CheckOutSuccessfull />} />

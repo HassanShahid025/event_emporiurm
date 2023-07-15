@@ -11,7 +11,7 @@ import { useNavigate } from "react-router-dom";
 const OrderHistory = () => {
   const { data, isLoading } = useFetchCollection("orders");
   const { orderHistory } = useSelector((store: RootState) => store.order);
-  const { userId } = useSelector((store: RootState) => store.auth);
+  const { user_id } = useSelector((store: RootState) => store.auth);
 
   const dispatch = useDispatch();
   useEffect(() => {
@@ -27,7 +27,7 @@ const OrderHistory = () => {
   console.log(orderHistory);
 
   const filteredOrders = orderHistory.filter(
-    (order: any) => order.userId === userId
+    (order: any) => order.user_id === user_id
   );
 
   return (
@@ -40,11 +40,9 @@ const OrderHistory = () => {
         <br />
         <>
           {isLoading && (
-           <div className="loading-container">
-           <img
-              src={spinnerImg}
-            />
-        </div>
+            <div className="loading-container">
+              <img src={spinnerImg} />
+            </div>
           )}
           <div className={style.table}>
             {filteredOrders.length === 0 ? (

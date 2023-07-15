@@ -3,6 +3,7 @@ import { IProduct, IProducts } from "../../types";
 
 const initialState:IProduct = {
   products: [],
+  myAds: [],
   minPrice:null,
   maxPrice:null
 };
@@ -14,6 +15,10 @@ const productSlice = createSlice({
     Store_Products : (state, {payload}) => {
         const {products} = payload;
         state.products = products
+    },
+    Store_myAds : (state, {payload}) => {
+        const {products} = payload;
+        state.myAds = products
     },
     get_price_range:(state,{payload}) => {
       const {products} = payload 

@@ -23,10 +23,12 @@ const ProductDetails = () => {
   const { id } = useParams();
   const [product, setProduct] = useState<IProducts | null>(null);
 
-  const { document } = useFetchDocument("products", id!);
+  const { document } = useFetchDocument("ads", id!);
+
 
   useEffect(() => {
     setProduct(document);
+    
   }, [document]);
 
   const dispatch = useDispatch();
@@ -38,7 +40,7 @@ const ProductDetails = () => {
   const { data } = useFetchCollection("reviews");
   const filteredReviews = data.filter((review) => review.productID == id);
 
-  const cart = cartItems.find((cart) => cart.id === id);
+  const cart = cartItems.find((cart) => cart.ad_id === id);
 
 
   // const decreaseCart = (cart: IProducts) => {
@@ -82,12 +84,13 @@ const ProductDetails = () => {
     }
   };
 
+
   return (
     <section>
       <div className={`container ${style.product}`}>
-        <h2>Venue Details</h2>
+        <h2>Ad Details</h2>
         <div>
-          <Link to="/#products">&larr; Back to Venues</Link>
+          <Link to="/#products">&larr; Back to Ads</Link>
         </div>
         {product === null ? (
           <img src={spinnerImg} alt="Loading.." style={{ width: "50px" }} />
@@ -95,22 +98,27 @@ const ProductDetails = () => {
           <>
             <div className={style.details}>
               <div className={style.img}>
-                <Carousell url={product.imageURL!} />
+                <Carousell url={product.images!} />
                 {/* <img src={product.imageURL} alt={product.name} /> */}
               </div>
               <div className={style.content}>
                 <h3>{product.name}</h3>
                 <p className={style.price}>{`Rs: ${product.price}`}</p>
-                <p>{product.desc}</p>
+                <p>{product.ad_desc}</p>
                 <p>
-                  <b>SKU</b> {product.id}
+                  <b>SKU:</b> {product.ad_id}
                 </p>
                 <p>
-                  <b>City</b> {product.city}
+                  <b>City:</b> {product.city}
                 </p>
                 <p>
-                  <b>Category</b> {product.category}
+                  <b>Category:</b> {product.category}
                 </p>
+                {product.venue_category !== "" && (
+                  <p>
+                  <b>Venue Category:</b> {product.venue_category}
+                </p>
+                )}
                 <p>
                   <b>Location</b>{" "}
                   <a href={product.location} target="_blank">

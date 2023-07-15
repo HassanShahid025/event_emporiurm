@@ -9,9 +9,25 @@
   }
 
   .form {
-    width: 35rem;
+    margin-top: 10rem;
+    margin-bottom: 3rem;
+    width: 41rem;
     padding: 1.5rem;
     animation: slide-up 0.5s ease;
+    label{
+      font-size: 1.4rem;
+    }
+    .inputs{
+      display: flex;
+      justify-content: space-between;
+      gap: 4px;
+      
+      div{
+          width: 50%;
+         
+
+      }
+  }
 
     border: 1px solid transparent;
     border-radius: 5px;
@@ -25,6 +41,7 @@
     form {
       input[type="text"],
       input[type="email"],
+      select,
       input[type="password"] {
         display: block;
         font-size: 1.6rem;

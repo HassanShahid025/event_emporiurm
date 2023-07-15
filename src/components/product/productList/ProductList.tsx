@@ -87,7 +87,7 @@ export const ProductList = ({ products }: IProductList) => {
           <>
             {currentProducts.map((product) => {
               return (
-                <div key={product.id}>
+                <div key={product.ad_id}>
                   <ProductItem product={product} grid={grid} />
                 </div>
               );

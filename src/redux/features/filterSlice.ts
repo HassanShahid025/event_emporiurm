@@ -13,7 +13,8 @@ const filterSlice = createSlice({
       const { products, search } = payload;
       const tempProducts = products.filter((product: IProducts) =>
         product.name?.toLowerCase().includes(search.toLowerCase()) ||
-        product.brand?.toLowerCase().includes(search.toLowerCase())||
+        product.location?.toLowerCase().includes(search.toLowerCase())||
+        product.venue_category?.toLowerCase().includes(search.toLowerCase())||
         product.category?.toLowerCase().includes(search.toLowerCase())
       );
       state.filteredProducts = tempProducts
@@ -57,17 +58,17 @@ const filterSlice = createSlice({
       }
       state.filteredProducts = tempProducts
     },
-    filter_by_brand:(state, {payload}) => {
-      const {products,brand,category} = payload
+    filter_by_city:(state, {payload}) => {
+      const {products,city,category} = payload
       let tempProducts:IProducts[] = []
-      if(brand === "All" && category === "All"){
+      if(city === "All" && category === "All"){
         tempProducts = products
       }
-      else if(category !== "All" && brand === "All"){
+      else if(category !== "All" && city === "All"){
         tempProducts = products.filter((product:IProducts) => product.category === category)
       }
       else{
-        tempProducts = products.filter((product:IProducts) => product.brand === brand)
+        tempProducts = products.filter((product:IProducts) => product.city === city)
       }
       state.filteredProducts = tempProducts
     },
@@ -80,6 +81,6 @@ const filterSlice = createSlice({
   },
 });
 
-export const { filter_by_search, filter_by_sort,filter_by_category, filter_by_brand,filter_by_price } = filterSlice.actions;
+export const { filter_by_search, filter_by_sort,filter_by_category, filter_by_price, filter_by_city } = filterSlice.actions;
 
 export default filterSlice.reducer;

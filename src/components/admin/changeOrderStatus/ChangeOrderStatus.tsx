@@ -24,7 +24,7 @@ const ChangeOrderStatus = ({ order, id }: IChangeOrderStatus) => {
     setIsLoading(true);
     e.preventDefault();
     const orderConfig = {
-      userId: order?.userId,
+      user_id: order?.user_id,
       email: order?.email,
       orderDate: order?.orderDate,
       orderTime: order?.orderTime,
@@ -50,11 +50,11 @@ const ChangeOrderStatus = ({ order, id }: IChangeOrderStatus) => {
   return (
     <>
       <div className={style.status}>
-      {isLoading && (
-        <div className="loading-container">
-          <img src={spinnerImg} />
-        </div>
-      )}
+        {isLoading && (
+          <div className="loading-container">
+            <img src={spinnerImg} />
+          </div>
+        )}
         <Card cardClass={style.card}>
           <h4>Update Status</h4>
           <form onSubmit={(e) => editOrder(e, id!)}>

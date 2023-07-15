@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import style from "./auth.module.scss";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, json, useNavigate } from "react-router-dom";
 import { FaGoogle } from "react-icons/fa";
 import loginImg from "../../assets/login.png";
 import {
@@ -15,8 +15,9 @@ import { useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
 import spinnerImg from '../../assets/spinner.jpg'
 import { useDispatch } from "react-redux";
-import { removePrevURL } from "../../redux/features/authSlice";
+import { removePrevURL, setUser } from "../../redux/features/authSlice";
 import { toggle_favourite } from "../../redux/features/cartSlice";
+import bcrypt from 'bcrypt';
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -25,9 +26,14 @@ const Login = () => {
 
   // const { previousUrl } = useSelector((store: RootState) => store.cart);
   const { previousURL,product } = useSelector((store: RootState) => store.auth);
+  const [user, setuser] = useState({})
 
   const navigate = useNavigate();
   const dispatch = useDispatch()
+
+  useEffect(() => {
+    dispatch(setUser({user}))
+  },[user])
 
   const redirectUser = () => {
     if (previousURL === null) {
@@ -39,21 +45,45 @@ const Login = () => {
     }
   };
 
-  const loginUser = (e: any) => {
+  const checkCredentiols = async(jsonData:any) => {
+    const isPasswordMatch = await bcrypt.compare(password, jsonData[0].password);
+        if(false){
+          toast.error("Incorrect password")
+        }
+        else{
+          setuser(jsonData[0])
+          redirectUser()
+        }
+  }
+
+  const loginUser = async(e: any) => {
     e.preventDefault();
     setLoading(true);
-    signInWithEmailAndPassword(auth, email, password)
-      .then((userCredentials) => {
-        setLoading(false);
-        toast.success("Login Successful");
-        setEmail("")
-        setPassword("")
-        redirectUser();
-      })
-      .catch((error) => {
-        toast.error(error.message);
-        setLoading(false);
-      });
+    // signInWithEmailAndPassword(auth, email, password)
+    //   .then((userCredentials) => {
+    //     setLoading(false);
+    //     toast.success("Login Successful");
+    //     setEmail("")
+    //     setPassword("")
+    //     redirectUser();
+    //   })
+    //   .catch((error) => {
+    //     toast.error(error.message);
+    //     setLoading(false);
+    //   });
+
+    try {
+      const response = await fetch(`http://localhost:3000/users-login/${email}`);
+      const jsonData = await response.json();
+      console.log(jsonData);
+      if(jsonData.length !== 0) {
+        checkCredentiols(jsonData)
+      }else{
+        toast.error("Email is not registered")
+      }
+    } catch (error) {
+      toast.error("error occured")
+    }
   };
 
   const provider = new GoogleAuthProvider();

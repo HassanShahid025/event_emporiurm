@@ -1,13 +1,14 @@
 export interface IProducts {
   category?: string;
-  id?: string;
-  imageURL?: string[];
+  ad_id?: string;
+  images?: string[];
   name?: string;
   city?: string;
-  location?:string;
+  location?: string;
   price?: number;
-  desc?: string;
-  createdAt?: any;
+  ad_desc?: string;
+  ad_date?: string;
+  venue_category?: string;
   editedAt?: any;
   cartQuantiy?: number;
   productID?: string;
@@ -15,6 +16,7 @@ export interface IProducts {
 
 export interface IProduct {
   products: IProducts[];
+  myAds: IProducts[];
   minPrice: null | number;
   maxPrice: null | number;
 }
@@ -25,7 +27,7 @@ export interface IFilter {
 
 export interface ICart {
   cartItems: IProducts[];
-  isFavourite:false
+  isFavourite: false;
 }
 
 export type ICard = {
@@ -39,7 +41,7 @@ export type ICard = {
 
 export interface IOrderHistory {
   orderHistory: any;
-  totalOrderAmount:number
+  totalOrderAmount: number;
 }
 
 export interface IOrder {
@@ -50,11 +52,10 @@ export interface IOrder {
   orderDate: string;
   orderStatus: string;
   orderTime: string;
-  userId: string;
+  user_id: string;
   shippingAddress: any;
-  createdAt:any;
-  editedAt?:any
-
+  createdAt: any;
+  editedAt?: any;
 }
 export interface IReview {
   createdAt: any;
@@ -63,6 +64,8 @@ export interface IReview {
   rate: number;
   review: string;
   reviewDate: string;
-  userId: string;
+  user_id: string;
   userName: string;
 }
+
+

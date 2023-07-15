@@ -1,14 +1,16 @@
+.dropdown-items {
+  display: flex;
+  align-items: center;
+  // justify-content: center;
+  gap: 0px;
+
+}
 .dropdown {
   position: relative;
   display: inline-block;
   margin-top: -4px;
 
-  .dropdown-items {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 2px;
-  }
+
 
   &__toggle {
     border: none;
