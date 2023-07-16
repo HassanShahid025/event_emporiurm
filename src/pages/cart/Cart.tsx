@@ -7,13 +7,16 @@ import { FaTrashAlt } from "react-icons/fa";
 import { useDispatch } from "react-redux";
 import { clear_cart, toggle_favourite } from "../../redux/features/cartSlice";
 import Notiflix from "notiflix";
+import { toast } from "react-toastify";
+import { useEffect, useState } from "react";
 
 
 const Cart = () => {
   const { cartItems} = useSelector(
     (store: RootState) => store.cart
   );
-  const { isLoggedIn } = useSelector((store: RootState) => store.auth.auth);
+  const { user } = useSelector((store: RootState) => store.auth.auth);
+  const [fav, setFav] = useState<any>([])
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -25,26 +28,16 @@ const Cart = () => {
   //   dispatch(decrease_cart({ product: cart }));
   // };
 
-  const deleteCartItem = (cart: IProducts) => {
-    Notiflix.Confirm.show(
-      "Remove Venue",
-      "You are about to remove this venue from favourites?",
-      "Remove",
-      "Cancel",
-      function okCb() {
-        dispatch(toggle_favourite({ product: cart }));
-      },
-      function cancelCb() {
-        console.log("cancel");
-      },
-      {
-        width: "320px",
-        borderRadius: "8px",
-        titleColor: "#f7c17b",
-        okButtonBackground: "#f7c17b",
-        cssAnimationStyle: "zoom",
-      }
-    );
+  const deleteFav = async(favourite_id: string) => {
+    try {
+      const deleteFav = await fetch(`http://localhost:3000/favourites-remove/${favourite_id}`, {
+        method: "DELETE",
+      });
+      getFav();
+      toast.success("Ad removed from favourites")
+    } catch (error) {
+      toast.error("error occured while removivg")
+    }
   };
 
   const clearCart = () => {
@@ -69,28 +62,29 @@ const Cart = () => {
     );
   };
 
-  // useEffect(() => {
-  //   dispatch(calculate_cartTotalAmount());
-  //   dispatch(calculate_CartTotalQuantity());
-  //   dispatch(save_url(""));
-  // }, [cartItems]);
 
-  const url = window.location.href;
+  const getFav = async() => {
+    try {
+      const response = await fetch(`http://localhost:3000/favourites-ads/${user.user_id}`);
+      const jsonData = await response.json();
+      setFav(jsonData);
+      console.log(jsonData);
+    } catch (error) {
+      toast.error("Error occured while fetching favourites")
+    }
+  }
 
-  // const checkout = () => {
-  //   if (isLoggedIn) {
-  //     navigate("/checkout-details");
-  //   } else {
-  //     dispatch(save_url(url));
-  //     navigate("/login");
-  //   }
-  // };
+  useEffect(() => {
+    getFav()
+  },[])
+
+  console.log(fav)
 
   return (
     <section>
       <div className={`container ${style.table}`}>
         <h2>Favourites</h2>
-        {cartItems.length === 0 ? (
+        {fav.length === 0 ? (
           <>
             <p>You have no favourites.</p>
             <br />
@@ -112,8 +106,8 @@ const Cart = () => {
                 </tr>
               </thead>
               <tbody>
-                {cartItems.map((cart: IProducts, index: number) => {
-                  const { ad_id, name, price, images, cartQuantiy,category,city } = cart;
+                {fav.map((ad:any, index: number) => {
+                  const { favourite_id, ad_id, name, price, images, cartQuantiy,category,city } = ad;
                   return (
                     <tr key={ad_id}>
                       <td>{index + 1}</td>
@@ -155,7 +149,7 @@ const Cart = () => {
                         <FaTrashAlt
                           size={18}
                           color="red"
-                          onClick={() => deleteCartItem(cart)}
+                          onClick={() => deleteFav(favourite_id)}
                         />
                       </td>
                     </tr>

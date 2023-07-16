@@ -2,14 +2,22 @@ import React, { useState } from "react";
 import { Button, Modal } from "antd";
 import { Card } from "../../components/card/Card";
 import style from './viewProfile.module.scss'
+import { useSelector } from "react-redux";
+import { RootState } from "../../redux/store";
 
-interface IEditProfile {
-  isModalOpen: boolean;
-  setIsModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
+
+const initialValue = {
+  first_name: "",
+  last_name: "",
+  email:"",
+  phone:"",
+  city:"",
+  gender:""
+
 }
-
 const EditProfile = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const { user } = useSelector((store: RootState) => store.auth.auth);
   const cities = ["Karachi", "Lahore", "Islamabad"];
   const genders = ["Male", "Female"];
 

@@ -89,7 +89,7 @@ app.post("/users/register", async (req, res) => {
 //add to favourites
 app.post("/favourites", async (req, res) => {
   try {
-    const { user_id, ad_id } = req.body;
+    const { ad_id, user_id } = req.body;
     const newFavourite = await pool.query(
       "INSERT INTO favourites (user_id, ad_id) VALUES($1, $2) RETURNING *",
       [user_id, ad_id]
@@ -153,12 +153,17 @@ app.get("/myads/:id", async (req, res) => {
 });
 
 // getFavourite ads
-app.get("/myfavourite/:id", async (req, res) => {
+app.get("/favourites-ads/:user_id", async (req, res) => {
   try {
-    const { id } = req.params;
+    const { user_id } = req.params;
     const favourite = await pool.query(
-      "select * from favourite where user_id = $1",
-      [id]
+      `
+      SELECT favourites.favourite_id,ads.city, ads.ad_id, ads.name, ads.category, ads.price, ads.images
+      FROM favourites
+      JOIN ads ON favourites.ad_id = ads.ad_id
+      WHERE favourites.user_id = $1
+      `,
+      [user_id]
     );
     res.json(favourite.rows);
   } catch (error) {
@@ -223,6 +228,34 @@ app.delete("/ads/:id", async (req, res) => {
   try {
     const { id } = req.params;
     const deleteAd = await pool.query("delete from ads where ad_id = $1", [id]);
+    res.json("ad was deleted");
+  } catch (error) {
+    console.log(message);
+  }
+});
+
+//remove from favourite
+app.delete("/favourites-remove/:favourite_id", async (req, res) => {
+  try {
+    const { favourite_id } = req.params;
+    const deleteFav = await pool.query(
+      "delete from favourites where favourite_id = $1",
+      [favourite_id]
+    );
+    res.json("ad was deleted");
+  } catch (error) {
+    console.log(message);
+  }
+});
+
+//remove from favourite
+app.delete("/favourites-remove-ad/:ad_id", async (req, res) => {
+  try {
+    const { ad_id } = req.params;
+    const deleteFav = await pool.query(
+      "delete from favourites where ad_id = $1",
+      [ad_id]
+    );
     res.json("ad was deleted");
   } catch (error) {
     console.log(message);
