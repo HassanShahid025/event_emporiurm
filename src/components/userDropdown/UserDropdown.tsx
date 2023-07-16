@@ -12,20 +12,27 @@ import { useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
 import type { MenuProps } from "antd";
 import { Dropdown, Space } from "antd";
+import { useDispatch } from "react-redux";
+import { removeUser } from "../../redux/features/authSlice";
 
 const UserDropdown = () => {
-  const { userName, user_id } = useSelector((store: RootState) => store.auth);
+  const { user} = useSelector((store: RootState) => store.auth.auth);
+  const {first_name,user_id} = user!
   const navigate = useNavigate();
+  const dispatch = useDispatch()
 
   const logoutUser = () => {
-    signOut(auth)
-      .then(() => {
-        toast.success("Logout Successful");
-        navigate("/");
-      })
-      .catch((error) => {
-        toast.error(error.message);
-      });
+    dispatch(removeUser());
+    toast.success("Logout Successful");
+    navigate("/");
+    // signOut(auth)
+    //   .then(() => {
+    //     toast.success("Logout Successful");
+    //     navigate("/");
+    //   })
+    //   .catch((error) => {
+    //     toast.error(error.message);
+    //   });
   };
 
   const items: MenuProps["items"] = [
@@ -79,7 +86,7 @@ const UserDropdown = () => {
     <Dropdown menu={{ items }}>
       <a onClick={(e) => e.preventDefault()}>
         <Space className="dropdown-items">
-          {userName}
+          {first_name}
           <MdKeyboardArrowDown size={25} />
         </Space>
       </a>

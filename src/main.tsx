@@ -8,6 +8,10 @@ import { store } from "./redux/store";
 import ScrollToTop from "./components/ScrollToTop";
 import "antd/dist/reset.css";
 import { ConfigProvider } from "antd";
+import { PersistGate } from "redux-persist/integration/react";
+import { persistStore } from "redux-persist";
+
+let persistor = persistStore(store);
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
@@ -15,7 +19,9 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
       <Provider store={store}>
         <ScrollToTop />
         <ConfigProvider>
-          <App />
+          <PersistGate persistor={persistor}>
+            <App />
+          </PersistGate>
         </ConfigProvider>
       </Provider>
     </BrowserRouter>

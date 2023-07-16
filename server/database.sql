@@ -25,4 +25,11 @@ CREATE TABLE users (
   phone VARCHAR(20)
 );
 
+CREATE TABLE favourites (
+  favourite_id SERIAL PRIMARY KEY,
+  user_id INT,
+  ad_id INT,
+  FOREIGN KEY (ad_id) REFERENCES ads (ad_id)
+);
+
 

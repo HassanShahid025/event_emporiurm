@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-  user : {},
+  user : {first_name:"",last_name:"",user_id:"",city:"",email:"",gender:"",phone:""},
   isLoggedIn: false,
   email: null,
   userName: null,
@@ -23,6 +23,7 @@ const authSlice = createSlice({
       state.user_id = payload.user_id;
     },
     removeUser: (state) => {
+      state.user = {first_name:"",last_name:"",user_id:"",city:"",email:"",gender:"",phone:""},
       state.isLoggedIn = false;
       state.email = null;
       state.userName = null;

@@ -35,30 +35,31 @@ const Header = () => {
   const [showMenu, setShowMenu] = useState(false);
   const [name, setName] = useState<string | null>("");
 
-  const { userName, isLoggedIn, user_id } = useSelector(
-    (store: RootState) => store.auth
+  const { isLoggedIn, user } = useSelector(
+    (store: RootState) => store.auth.auth
   );
+
+  console.log(isLoggedIn)
+  console.log(user)
+
 
   const { cartItems } = useSelector((store: RootState) => store.cart);
 
   const dispatch = useDispatch();
 
   //Monitor currently signed in user
-  useEffect(() => {
-    onAuthStateChanged(auth, (user) => {
-      if (user) {
-        if (user.displayName) {
-          setName(user.displayName!.split(" ")[0]);
-        }
-        dispatch(
-          setUser({ email: user.email, userName: name, user_id: user.uid })
-        );
-      } else {
-        setName("");
-        dispatch(removeUser());
-      }
-    });
-  }, [name]);
+  // useEffect(() => {
+  //   onAuthStateChanged(auth, (user) => {
+  //     if (user) {
+  //       dispatch(
+  //         setUser({ email: user.email, userName: name, user_id: user.uid })
+  //       );
+  //     } else {
+  //       setName("");
+  //       dispatch(removeUser());
+  //     }
+  //   });
+  // }, [name]);
 
   const toggleMenu = () => {
     setShowMenu(!showMenu);
@@ -68,18 +69,7 @@ const Header = () => {
     setShowMenu(false);
   };
 
-  const navigate = useNavigate();
-
-  const logoutUser = () => {
-    signOut(auth)
-      .then(() => {
-        toast.success("Logout Successful");
-        navigate("/");
-      })
-      .catch((error) => {
-        toast.error(error.message);
-      });
-  };
+  
 
   const cart = (
     <span className="cart">

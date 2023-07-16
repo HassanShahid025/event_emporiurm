@@ -13,7 +13,7 @@ const Cart = () => {
   const { cartItems} = useSelector(
     (store: RootState) => store.cart
   );
-  const { isLoggedIn } = useSelector((store: RootState) => store.auth);
+  const { isLoggedIn } = useSelector((store: RootState) => store.auth.auth);
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -107,13 +107,13 @@ const Cart = () => {
                   <th>Venues</th>
                   <th>Price</th>
                   <th>Category</th>
-                  <th>Total</th>
+                  <th>City</th>
                   <th>Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {cartItems.map((cart: IProducts, index: number) => {
-                  const { ad_id, name, price, images, cartQuantiy,category } = cart;
+                  const { ad_id, name, price, images, cartQuantiy,category,city } = cart;
                   return (
                     <tr key={ad_id}>
                       <td>{index + 1}</td>
@@ -150,7 +150,7 @@ const Cart = () => {
                           </button>
                         </div> */}
                       </td>
-                      <td>{(price! * cartQuantiy!).toFixed(2)}</td>
+                      <td>{city}</td>
                       <td className={style.icons}>
                         <FaTrashAlt
                           size={18}

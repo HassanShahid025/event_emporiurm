@@ -74,7 +74,7 @@ app.post("/users/register", async (req, res) => {
     const { first_name, last_name, password, email, city, gender, phone } =
       req.body;
     const hashedPassword = await bcrypt.hash(password, 10);
-    console.log(hashedPassword)
+    console.log(hashedPassword);
     const newUser = await pool.query(
       "INSERT INTO users (first_name,last_name,password,email,city,gender,phone) VALUES($1, $2, $3,$4,$5,$6,$7) RETURNING *",
       [first_name, last_name, hashedPassword, email, city, gender, phone]
@@ -85,15 +85,38 @@ app.post("/users/register", async (req, res) => {
     console.error(err.message);
   }
 });
-//login user
-// app.post("/users/login", 
-// passsport.authenticate("local", {
-//   successRedirect : "/",
-//   failureRedirect: "/login",
-//   failureFlash:true
-// })
-// )
 
+//add to favourites
+app.post("/favourites", async (req, res) => {
+  try {
+    const { user_id, ad_id } = req.body;
+    const newFavourite = await pool.query(
+      "INSERT INTO favourites (user_id, ad_id) VALUES($1, $2) RETURNING *",
+      [user_id, ad_id]
+    );
+    res.json(newFavourite.rows[0]);
+  } catch (err) {
+    console.error(err.message);
+  }
+});
+
+//check password
+app.post("/users-password", async (req, res) => {
+  try {
+    const { enteredPassword, password } = req.body;
+    const isPasswordMatch = await bcrypt.compare(enteredPassword, password);
+
+    if (isPasswordMatch) {
+      // Password is correct, send a success response
+      res.status(200).json({ message: "Login successful" });
+    } else {
+      // Password is incorrect, send an error response
+      res.status(401).json({ message: "Invalid password" });
+    }
+  } catch (err) {
+    console.error(err.message);
+  }
+});
 
 //get all ads
 app.get("/ads", async (req, res) => {
@@ -147,16 +170,14 @@ app.get("/myfavourite/:id", async (req, res) => {
 app.get("/users-login/:email", async (req, res) => {
   try {
     const { email } = req.params;
-    const user = await pool.query(
-      "select * from users where email = $1",
-      [email]
-    );
+    const user = await pool.query("select * from users where email = $1", [
+      email,
+    ]);
     res.json(user.rows);
   } catch (error) {
     console.log(error.message);
   }
 });
-
 
 //update an ad
 app.put("/ads/:id", async (req, res) => {

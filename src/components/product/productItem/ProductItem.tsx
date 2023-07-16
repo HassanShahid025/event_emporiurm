@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import  { useEffect, useState } from "react";
 import style from "./ProductItem.module.scss";
 import { IProducts } from "../../../types";
 import { Card } from "../../card/Card";
@@ -8,8 +8,6 @@ import { toggle_favourite } from "../../../redux/features/cartSlice";
 import { AiOutlineHeart, AiTwotoneHeart } from "react-icons/ai";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../redux/store";
-import { addDoc, collection } from "firebase/firestore";
-import { db } from "../../../firebase/config";
 import Notiflix from "notiflix";
 import { addPrevURL } from "../../../redux/features/authSlice";
 
@@ -22,7 +20,7 @@ const ProductItem = ({ product, grid }: IProductItem) => {
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
   const { ad_id, name, price, ad_desc, images, city } = product;
   const { cartItems } = useSelector((store: RootState) => store.cart);
-  const { user_id, isLoggedIn } = useSelector((store: RootState) => store.auth);
+  const { user_id, isLoggedIn } = useSelector((store: RootState) => store.auth.auth);
   const isFavourite = cartItems.find((item) => item.ad_id === ad_id);
 
   const shortingText = (text: string, n: number) => {
