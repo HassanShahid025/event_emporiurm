@@ -26,7 +26,6 @@ const Product = () => {
       const response = await fetch("http://localhost:3000/ads");
       const jsonData = await response.json();
       setAds(jsonData);
-      console.log(jsonData);
       setIsLoading(false)
 
     } catch (error) {
@@ -50,7 +49,8 @@ const Product = () => {
   }, [dispatch,ads])
 
   const { products } = useSelector((store: RootState) => store.product);
-
+  const { filteredProducts } = useSelector((store: RootState) => store.filter);
+ 
   return (
     <div className={style.section}>
       <div className={`container ${style.product}`}>

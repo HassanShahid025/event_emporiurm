@@ -12,59 +12,79 @@ import useFetchDocument from "../../customHooks/useFetchDocument";
 import { IProducts } from "../../types";
 import spinnerImg from "../../assets/spinner.jpg";
 
-const ReviewProduct = () => {
+interface IReviews{
+  setAdReviews: React.Dispatch<React.SetStateAction<any[]>>
+}
+
+const ReviewProduct = ({setAdReviews}:IReviews) => {
   const [rate, setRate] = useState(0);
   const [review, setReview] = useState("");
   const [product, setProduct] = useState<IProducts | null>(null);
   const { id } = useParams();
 
-  const { user_id, userName } = useSelector((store: RootState) => store.auth);
+  const { user } = useSelector((store: RootState) => store.auth.auth);
   const { products } = useSelector((store: RootState) => store.product);
   const { document } = useFetchDocument("products", id!);
+  const [date, setDate] = useState("")
+
+  useEffect(() => {
+    const todaydate = new Date();
+    const year = String(todaydate.getFullYear());
+    const month = String(todaydate.getMonth() + 1).padStart(2, "0");
+    const day = String(todaydate.getDate()).padStart(2, "0");
+    setDate(`${year}-${month}-${day}`);
+  }, []);
   useEffect(() => {
     setProduct(document);
   }, [document]);
 
-  const submitReview = (e: any) => {
+  const submitReview = async(e: any) => {
     e.preventDefault();
 
-    const today = new Date();
-    const date = today.toDateString();
-    const reviewConfig = {
-      user_id,
-      userName,
-      productID: id,
-      rate,
-      review,
-      reviewDate: date,
-      createdAt: Timestamp.now().toDate(),
-    };
-
     try {
-      addDoc(collection(db, "reviews"), reviewConfig);
-      toast.success("Review submitted successfully");
+      const body = { ad_id:id,user_id:user.user_id,rating:rate,review_text:review,review_date:date,first_name:user.first_name };
+      const response = await fetch(`http://localhost:3000/reviews-add/${id}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
       setRate(0);
-      setReview("");
-    } catch (error: any) {
-      toast.error(error.message);
+      setReview("")
+      getReviews()
+      toast.success("Review submitted")
+    } catch (error) {
+      toast.error("Error occured");
+      ;
     }
   };
+
+  const getReviews = async () => {
+    try {
+      const response = await fetch(`http://localhost:3000/reviews/${id}`);
+      const jsonData = await response.json();
+      setAdReviews(jsonData);
+      console.log(jsonData);
+    } catch (error) {
+      toast.error("error occured");
+    }
+  };
+
 
   return (
     <section>
       <div className={`container ${style.review}`}>
         <h2>Review Product</h2>
-        {product === null ? (
+        {/* {product === null ? (
           <div className="loading-container">
             <img src={spinnerImg} />
           </div>
-        ) : (
+        ) : ( */}
           <>
             <p>
               <b>Product Name</b> {product?.name}
             </p>
             <img
-              src={product?.imageURL}
+              src={product?.images![0]}
               alt={product?.name}
               style={{ width: "100px" }}
             />
@@ -86,7 +106,6 @@ const ReviewProduct = () => {
               </form>
             </Card>
           </>
-        )}
       </div>
     </section>
   );

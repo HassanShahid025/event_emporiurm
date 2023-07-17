@@ -78,7 +78,7 @@ const initialState = {
 };
 
 const AddProduct = () => {
-  const { user_id } = useSelector((store: RootState) => store.auth);
+  const { user_id } = useSelector((store: RootState) => store.auth.auth);
   const { id } = useParams();
 
   const [date, setDate] = useState("");
@@ -93,6 +93,10 @@ const AddProduct = () => {
     const day = String(todaydate.getDate()).padStart(2, "0");
     setDate(`${year}-${month}-${day}`);
   }, []);
+
+  useEffect(() => {
+    setProduct({ ...product, ad_date: date });
+  },[date])
   
   const { products } = useSelector((store: RootState) => store.product);
 
@@ -213,7 +217,6 @@ const AddProduct = () => {
 
   const addProduct = async (e: any) => {
     console.log("date:", date);
-    setProduct({ ...product, ad_date: date });
     console.log("ad date:", product.ad_date);
     e.preventDefault();
     setIsLoading(true);
@@ -251,6 +254,7 @@ const AddProduct = () => {
       setProduct({ ...initialState });
       setIsLoading(true);
       toast.success("AD added");
+      navigate('/')
     } catch (error) {
       setIsLoading(true);
       console.log(error);

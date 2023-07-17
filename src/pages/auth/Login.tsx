@@ -162,8 +162,8 @@ const Login = () => {
             <FaGoogle color="#fff" /> Login With Google
           </button>
           <span className={style.register}>
-            <p>Don't have a account?</p>
-            <Link to="/register">Register</Link>
+            <p>Don't have a account? <Link to="/register">Register</Link></p>
+            
           </span>
         </div>
       </section>

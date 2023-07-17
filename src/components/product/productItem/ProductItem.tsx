@@ -24,8 +24,7 @@ const ProductItem = ({ product, grid }: IProductItem) => {
   const { user, isLoggedIn } = useSelector((store: RootState) => store.auth.auth);
   const [fav, setFav] = useState<any>([])
   const isFavourite = fav.find((item:any) => item.ad_id === ad_id);
-  console.log(isFavourite)
-  console.log(fav)
+  
 
 
   const shortingText = (text: string, n: number) => {
@@ -108,7 +107,6 @@ const ProductItem = ({ product, grid }: IProductItem) => {
       const response = await fetch(`http://localhost:3000/favourites-ads/${user.user_id}`);
       const jsonData = await response.json();
       setFav(jsonData);
-      console.log(jsonData);
     } catch (error) {
       toast.error("Error occured while fetching favourites")
     }
@@ -117,7 +115,10 @@ const ProductItem = ({ product, grid }: IProductItem) => {
   
 
   useEffect(() => {
-    getFav()
+    if(isLoggedIn){
+      getFav()
+
+    }
   },[])
 
 

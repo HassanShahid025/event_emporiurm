@@ -1,5 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { IFilter, IProducts } from "../../types";
+import { configConsumerProps } from "antd/es/config-provider";
 
 const initialState: IFilter = {
   filteredProducts: [],
@@ -50,6 +51,8 @@ const filterSlice = createSlice({
     },
     filter_by_category:(state, {payload}) => {
       const {products,category} = payload
+      console.log(products)
+      console.log(category)
       let tempProducts:IProducts[] = []
       if(category === "All"){
         tempProducts = products
@@ -57,6 +60,7 @@ const filterSlice = createSlice({
         tempProducts = products.filter((product:IProducts) => product.category === category)
       }
       state.filteredProducts = tempProducts
+      console.log(state.filteredProducts)
     },
     filter_by_city:(state, {payload}) => {
       const {products,city,category} = payload

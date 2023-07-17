@@ -22,8 +22,14 @@ export const ProductList = ({ products }: IProductList) => {
   const [grid, setGrid] = useState(true);
   const [search, setSearch] = useState("");
   const [sort, setSort] = useState("latest");
-
   const { filteredProducts } = useSelector((store: RootState) => store.filter);
+  const [filterProducts, setFilterProducts] = useState<any[]>([])
+
+  console.log(filteredProducts)
+
+  useEffect(() => {
+    setFilterProducts(filteredProducts)
+  },[filteredProducts])
 
   //Pagination states
   const [currentPage, setCurrentPage] = useState(1);
@@ -44,7 +50,7 @@ export const ProductList = ({ products }: IProductList) => {
 
   useEffect(() => {
     dispatch(filter_by_sort({ products, sort }));
-  }, [dispatch, sort, products]);
+  }, [sort, products]);
 
   return (
     <div className={style["product-list"]} id="product">
@@ -57,8 +63,8 @@ export const ProductList = ({ products }: IProductList) => {
           />
           <FaListAlt size={24} color="#0066d4" onClick={() => setGrid(false)} />
           <p>
-            <b>{filteredProducts.length}</b>{" "}
-            {filteredProducts.length > 1 ? "Products found." : "Product found."}
+            <b>{filterProducts.length}</b>{" "}
+            {filterProducts.length > 1 ? "Products found." : "Product found."}
           </p>
         </div>
         {/* {Search Icon} */}
@@ -81,11 +87,11 @@ export const ProductList = ({ products }: IProductList) => {
         </div>
       </div>
       <div className={grid ? `${style.grid}` : `${style.list}`}>
-        {filteredProducts.length === 0 ? (
+        {filterProducts.length === 0 ? (
           <p>No product found.</p>
         ) : (
           <>
-            {currentProducts.map((product) => {
+            {filterProducts.map((product) => {
               return (
                 <div key={product.ad_id}>
                   <ProductItem product={product} grid={grid} />

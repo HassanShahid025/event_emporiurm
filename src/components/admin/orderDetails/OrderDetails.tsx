@@ -66,9 +66,9 @@ const OrderDetails = () => {
               </thead>
               <tbody>
                 {order.cartItems.map((item, index: number) => {
-                  const { id, name, price, imageURL, cartQuantiy } = item;
+                  const { ad_id, name, price, images, cartQuantiy } = item;
                   return (
-                    <tr key={id}>
+                    <tr key={ad_id}>
                       <td>
                         <b>{index + 1}</b>
                       </td>
@@ -77,7 +77,7 @@ const OrderDetails = () => {
                           <b>{name}</b>
                         </p>
                         <img
-                          src={imageURL}
+                          src={images![0]}
                           alt={name}
                           style={{ width: "100px" }}
                         />

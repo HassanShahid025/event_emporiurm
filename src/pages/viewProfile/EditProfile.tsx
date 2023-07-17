@@ -6,21 +6,29 @@ import { useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
 
 
-const initialValue = {
+const initialState = {
   first_name: "",
   last_name: "",
-  email:"",
-  phone:"",
-  city:"",
-  gender:""
+  email: "",
+  city: "",
+  password: "",
+  confirmPassword: "",
+  gender: "",
+  phone: "",
+};
 
-}
 const EditProfile = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { user } = useSelector((store: RootState) => store.auth.auth);
+  const [editUser, setEditUser] = useState({ ...user });
+  const [loading, setLoading] = useState(false);
   const cities = ["Karachi", "Lahore", "Islamabad"];
   const genders = ["Male", "Female"];
-
+  const handleInput = (e: any) => {
+    const {name, value} = e.target;
+    setEditUser({ ...editUser, [name]: value });
+  };
+console.log(user.city)
   const showModal = () => {
     setIsModalOpen(true);
   };
@@ -51,7 +59,9 @@ const EditProfile = () => {
                   <label>First Name:</label>
                   <input
                     type="text"
-                    name="user_name"
+                    name="first_name"
+                    value={editUser.first_name}
+                    onChange={(e) => handleInput(e)}
                     placeholder="First name"
                     required
                   />
@@ -59,8 +69,10 @@ const EditProfile = () => {
                 <div>
                   <label>Last Name:</label>
                   <input
-                    type="email"
-                    name="user_name"
+                    type="text"
+                    name="last_name"
+                    value={editUser.last_name}
+                    onChange={(e) => handleInput(e)}
                     placeholder="Last name"
                     required
                   />
@@ -71,14 +83,16 @@ const EditProfile = () => {
                   <label>Mobile:</label>
                   <input
                     type="text"
-                    name="user_name"
+                    name="phone"
+                    value={editUser.phone}
+                    onChange={(e) => handleInput(e)}
                     placeholder="Mobile number"
                     required
                   />
                 </div>
                 <div>
                   <label>City:</label>
-                  <select required name="city">
+                  <select required name="city" value={user.city} onChange={(e) => handleInput(e)}>
                     <option value="" disabled>
                       -- Choose City--
                     </option>
@@ -97,26 +111,16 @@ const EditProfile = () => {
                   <label>Email:</label>
                   <input
                     type="email"
-                    name="user_name"
+                    name="email"
+                    value={editUser.email}
+                    onChange={(e) => handleInput(e)}
                     placeholder="Your email"
                     required
                   />
                 </div>
                 <div>
-                  <label>Password:</label>
-                  <input
-                    type="password"
-                    name="user_name"
-                    placeholder="Full Name"
-                    required
-                  />
-                </div>
-              </div>
-
-              <div className={style.inputs}>
-              <div>
                   <label>Gender:</label>
-                  <select required name="city">
+                  <select required name="gender" value={user.gender} onChange={(e) => handleInput(e)}>
                     <option value="" disabled>
                       -- Choose Your Gender--
                     </option>

@@ -1,8 +1,6 @@
 import { useState } from "react";
 import "./dropdown.scss";
-import { MdKeyboardArrowDown, MdKeyboardArrowUp } from "react-icons/md";
-import { signOut } from "firebase/auth";
-import { auth } from "../../firebase/config";
+import { MdKeyboardArrowDown } from "react-icons/md";
 import { toast } from "react-toastify";
 import { Link, useNavigate } from "react-router-dom";
 import { FaUserAlt, FaListAlt, FaBuysellads } from "react-icons/fa";
@@ -18,21 +16,13 @@ import { removeUser } from "../../redux/features/authSlice";
 const UserDropdown = () => {
   const { user} = useSelector((store: RootState) => store.auth.auth);
   const {first_name,user_id} = user!
-  const navigate = useNavigate();
+  const navigate = useNavigate()
   const dispatch = useDispatch()
 
   const logoutUser = () => {
     dispatch(removeUser());
-    toast.success("Logout Successful");
     navigate("/");
-    // signOut(auth)
-    //   .then(() => {
-    //     toast.success("Logout Successful");
-    //     navigate("/");
-    //   })
-    //   .catch((error) => {
-    //     toast.error(error.message);
-    //   });
+    toast.success("Logout Successful");
   };
 
   const items: MenuProps["items"] = [

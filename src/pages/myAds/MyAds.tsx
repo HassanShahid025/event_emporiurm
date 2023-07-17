@@ -17,7 +17,7 @@ const MyAds = () => {
   const { cartItems} = useSelector(
     (store: RootState) => store.cart
   );
-  const { user_id } = useSelector((store: RootState) => store.auth);
+  const { user_id } = useSelector((store: RootState) => store.auth.auth);
   const {document} = useFetchDocument("myads" , user_id!)
   const [ads, setAds] = useState<IProducts[]>([]);
 

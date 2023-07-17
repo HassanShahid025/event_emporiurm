@@ -32,4 +32,21 @@ CREATE TABLE favourites (
   FOREIGN KEY (ad_id) REFERENCES ads (ad_id)
 );
 
+CREATE TABLE reviews (
+  review_id SERIAL PRIMARY KEY,
+  rating INT,
+  review_text TEXT,
+  ad_id INT,
+  user_id INT,
+  FOREIGN KEY (user_id) REFERENCES users (user_id)
+);
+
+CREATE TABLE complaints (
+  complain_id SERIAL PRIMARY KEY,
+  user_id INT NOT NULL,
+  ad_id INT NOT NULL,
+  ad_name VARCHAR(255) NOT NULL,
+  complain_text TEXT NOT NULL
+);
+
 

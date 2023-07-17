@@ -4,9 +4,9 @@ import { RootState } from "../../redux/store";
 import { Link } from "react-router-dom";
 
 const AdminOnlyRoute = ({ children }: any) => {
-  const { email } = useSelector((store: RootState) => store.auth);
+  const { user } = useSelector((store: RootState) => store.auth.auth);
 
-  if (email === import.meta.env.VITE_REACT_APP_ADMIN_USER) {
+  if (user.email === import.meta.env.VITE_REACT_APP_ADMIN_USER) {
     // password = 123456
     return children;
   } else {
@@ -27,9 +27,9 @@ const AdminOnlyRoute = ({ children }: any) => {
 export default AdminOnlyRoute;
 
 export const AdminOnlyLinks = ({ children }: any) => {
-  const { email } = useSelector((store: RootState) => store.auth);
+  const { user } = useSelector((store: RootState) => store.auth.auth);
 
-  if (email === import.meta.env.VITE_REACT_APP_ADMIN_USER) {
+  if (user.email === import.meta.env.VITE_REACT_APP_ADMIN_USER) {
  
     return children;
   } else {

@@ -23,6 +23,8 @@ const Register = () => {
   const [user, setUser] = useState({ ...initialState });
   const [loading, setLoading] = useState(false);
 
+  console.log(user)
+
   const handleInput = (e: any) => {
     const {name, value} = e.target;
     setUser({ ...user, [name]: value });
@@ -191,10 +193,10 @@ const Register = () => {
                 />
               </div>
               <div>
-                <label>Gender:</label>
+              <label>Gender:</label>
                 <select required name="gender" value={user.gender} onChange={(e) => handleInput(e)}>
                   <option  disabled>
-                    -- Choose Your Gender--
+                    -- Choose Gender--
                   </option>
                   {genders.map((gender, index) => {
                     return (

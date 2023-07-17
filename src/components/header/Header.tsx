@@ -22,7 +22,7 @@ const logo = (
   <div className="logo">
     <Link to="/">
       <h2>
-        e<span>Dukaan</span>.
+        e<span>Emporium</span>.
       </h2>
     </Link>
   </div>

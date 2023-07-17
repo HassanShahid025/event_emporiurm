@@ -25,6 +25,8 @@ const ProductFilter = () => {
     ...new Set(products.map((product) => product.category)),
   ];
 
+ 
+
 
   // let allCities: string[] = [];
   const getCities = (cat: string) => {
@@ -53,9 +55,9 @@ const ProductFilter = () => {
 
   const filterProducts = (cat: string) => {
     setCategory(cat);
- 
     dispatch(filter_by_category({ products, category: cat }));
   };
+
 
   const clearFilters = () => {
     setCategory("All")
