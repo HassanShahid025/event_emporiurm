@@ -12,19 +12,27 @@ import { toast } from "react-toastify";
 const DateModal = ({ad_id}:{ad_id:string}) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [value, setValue] = useState<any[]>([ ]);
-  const [bookingData, setBookingData ] = useState<any>()
+  const [bookingData, setBookingData ] = useState<any[]>([])
 
   const getBookings = async() => {
+    console.log(ad_id)
     try {
         const response = await fetch(`http://localhost:3000/bookings/${ad_id}`);
         const jsonData = await response.json();
-        setBookingData(jsonData);
         const convertedDates = jsonData.booking_dates.map(date => new Date(date).toISOString().split('T')[0]);
-        setValue(convertedDates)
+        console.log(convertedDates)
+        console.log(jsonData)
+        setBookingData(convertedDates)
       } catch (error) {
         console.log("error occured")
       }
   }
+
+  useEffect(() => {
+    if(bookingData.length!==0){
+        setValue(bookingData)
+    }
+  },[bookingData])
  
 
   const showModal = () => {
@@ -34,11 +42,18 @@ const DateModal = ({ad_id}:{ad_id:string}) => {
 
   const handleOk = () => {
     setIsModalOpen(false);
+    setBookingData([])
+    setValue([])
   };
 
   const handleCancel = () => {
     setIsModalOpen(false);
+    setBookingData([])
+    setValue([])
   };
+
+  console.log("val", value)
+  console.log("book", bookingData)
 
   const handleSubmit = async() => {
           const dates = value.map((date) => {
@@ -48,8 +63,6 @@ const DateModal = ({ad_id}:{ad_id:string}) => {
         return `${year}-${month}-${day}`
         })
 
-        console.log(dates)
-
         try {
             const body = { ad_id, booking_dates:dates };
             const response = await fetch(`http://localhost:3000/booking-add/${ad_id}`, {
@@ -58,7 +71,8 @@ const DateModal = ({ad_id}:{ad_id:string}) => {
               body: JSON.stringify(body),
             });
             handleOk();
-            toast.success("Bookings updated")
+            toast.success("Bookings added")
+            setValue([])
           } catch (error) {
             toast.error("error occured")
           }
@@ -81,6 +95,7 @@ const DateModal = ({ad_id}:{ad_id:string}) => {
         body: JSON.stringify(body),
       });
       toast.success("Bookings updated");
+      setValue([])
       handleOk()
     } catch (error) {
       toast.error("Error occurred");
@@ -100,7 +115,7 @@ const DateModal = ({ad_id}:{ad_id:string}) => {
       />
       <Modal
         open={isModalOpen}
-        onOk={value.length === 0 ? handleSubmit : handleEdit }
+        onOk={bookingData.length === 0 ? handleSubmit : handleEdit }
         onCancel={handleCancel}
         width={500}
       >
