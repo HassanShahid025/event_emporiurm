@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "./dropdown.scss";
 import { MdKeyboardArrowDown } from "react-icons/md";
 import { toast } from "react-toastify";
@@ -16,13 +16,13 @@ import { removeUser } from "../../redux/features/authSlice";
 const UserDropdown = () => {
   const { user} = useSelector((store: RootState) => store.auth.auth);
   const {first_name,user_id} = user!
-  const navigate = useNavigate()
   const dispatch = useDispatch()
+  const navigate = useNavigate()
 
   const logoutUser = () => {
     dispatch(removeUser());
-    navigate("/");
     toast.success("Logout Successful");
+    navigate("/");
   };
 
   const items: MenuProps["items"] = [
@@ -39,16 +39,14 @@ const UserDropdown = () => {
     {
       key: "3",
       label: (
-        <a
-          target="_blank"
-          rel="noopener noreferrer"
-          href="https://www.luohanacademy.com"
+        <Link
+          to='/todo'
         >
-          Todo List (disabled)
-        </a>
+          Todo List 
+        </Link>
       ),
       icon: <FaListAlt />,
-      disabled: true,
+      
     },
     {
       key: "4",

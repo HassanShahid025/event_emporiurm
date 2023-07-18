@@ -24,6 +24,7 @@ import NotFound from "./pages/notFound/NotFound";
 import ViewProfile from "./pages/viewProfile/ViewProfile";
 import AddProduct from "./components/admin/addProduct/AddProduct";
 import MyAds from "./pages/myAds/MyAds";
+import Todo from "./pages/todo/Todo";
 
 function App() {
   return (
@@ -40,12 +41,13 @@ function App() {
         <Route path="/favourites/:id" element={<Cart />} />
         <Route path="/add-product/:id" element={<AddProduct />} />
         <Route path="/my-ads/:id" element={<MyAds />} />
+        <Route path="/review-product/:id" element={<ReviewProduct />} />
+        <Route path="/todo" element={<Todo />} />
         <Route path="/checkout-details" element={<CheckoutDetails />} />
         <Route path="/checkout" element={<Checkout />} />
         <Route path="/checkout-success" element={<CheckOutSuccessfull />} />
         <Route path="/order-history" element={<OrderHistory />} />
         <Route path="/order-details/:id" element={<OrderDetails />} />
-        <Route path="/review-product/:id" element={<ReviewProduct />} />
 
         <Route
           path="/admin/*"

@@ -1,5 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
+
 const initialState = {
   user : {first_name:"",last_name:"",user_id:"",city:"",email:"",gender:"",phone:""},
   isLoggedIn: false,
@@ -10,6 +11,8 @@ const initialState = {
   previousURL: null,
   product: null,
 };
+
+
 
 const authSlice = createSlice({
   name: "auth",
@@ -28,6 +31,7 @@ const authSlice = createSlice({
       state.email = null;
       state.userName = null;
       state.user_id = null;
+     
     },
     addPrevURL: (state, { payload }) => {
       state.previousURL = payload.url;

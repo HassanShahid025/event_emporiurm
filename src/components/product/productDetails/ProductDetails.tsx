@@ -1,8 +1,6 @@
 import { useEffect, useState } from "react";
 import style from "./ProductDetails.module.scss";
 import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
-import { doc, getDoc } from "firebase/firestore";
-import { db } from "../../../firebase/config";
 import { IProducts } from "../../../types";
 import { toast } from "react-toastify";
 import spinnerImg from "../../../assets/spinner.jpg";
@@ -10,7 +8,6 @@ import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../redux/store";
 import useFetchDocument from "../../../customHooks/useFetchDocument";
-import useFetchCollection from "../../../customHooks/useFetchCollection";
 import { Card } from "../../card/Card";
 import StarsRating from "react-star-rate";
 import Carousell from "../../carousel/Carousel";
@@ -20,11 +17,13 @@ import Notiflix from "notiflix";
 import { addPrevURL } from "../../../redux/features/authSlice";
 import ReviewProduct from "../../reviewProduct/ReviewProduct";
 import ComplainModal from "../../complainModal/ComplainModal";
-import { Button } from "antd";
+
+import AdBookings from "./AdBookings";
 
 const ProductDetails = () => {
   const { id } = useParams();
   const [product, setProduct] = useState<IProducts | null>(null);
+  const [bookingDates, setBookingDates] = useState<any[]>([]);
 
   const { document } = useFetchDocument("ads", id!);
 
@@ -40,9 +39,7 @@ const ProductDetails = () => {
   const { isLoggedIn, user } = useSelector(
     (store: RootState) => store.auth.auth
   );
-  // const { document:reviews } = useFetchDocument("reviews",id!);
   const [adReviews, setAdReviews] = useState<any[]>([]);
-  // const filteredReviews = data.filter((review) => review.productID == id);
 
   const cart = cartItems.find((cart) => cart.ad_id === id);
   console.log(user);
@@ -59,8 +56,25 @@ const ProductDetails = () => {
     }
   };
 
+  const getBookings = async () => {
+    const ad_id = id;
+    try {
+      const response = await fetch(`http://localhost:3000/bookings/${ad_id}`);
+      const jsonData = await response.json();
+      const convertedDates = (jsonData.booking_dates as string[]).map(
+        (date) => new Date(date).toISOString().split("T")[0]
+      );
+      console.log(convertedDates);
+      console.log(jsonData);
+      setBookingDates(convertedDates);
+    } catch (error) {
+      console.log("error occured");
+    }
+  };
+
   useEffect(() => {
     getReviews();
+    getBookings()
   }, []);
 
   const toggleFavourite = () => {
@@ -94,6 +108,8 @@ const ProductDetails = () => {
     }
   };
 
+  console.log(product?.user_id)
+
   return (
     <section>
       <div className={`container ${style.product}`}>
@@ -112,7 +128,13 @@ const ProductDetails = () => {
               </div>
               <div className={style.content}>
                 <h3>{product.name}</h3>
+                <div className={style.flex}>
                 <p className={style.price}>{`Rs: ${product.price}`}</p>
+                <span >
+                  <p className={style.price}>Bookings:</p>
+                <AdBookings bookingDates={bookingDates}/>
+                </span>
+                </div>
                 <p>{product.ad_desc}</p>
                 <p>
                   <b>SKU:</b> {product.ad_id}
@@ -134,25 +156,6 @@ const ProductDetails = () => {
                     View on Google maps <FiExternalLink />
                   </a>
                 </p>
-                {/* {cart && (
-                  <div className={style.count}>
-                    <button
-                      className="--btn"
-                      // onClick={() => decreaseCart(product)}
-                    >
-                      -
-                    </button>
-                    <p>
-                      <b>{cart?.cartQuantiy}</b>
-                    </p>
-                    <button
-                      className="--btn"
-                      // onClick={() => addToCart(product)}
-                    >
-                      +
-                    </button>
-                  </div>
-                )} */}
                 <button
                   className="--btn --btn-danger"
                   onClick={() => checkLogin()}
@@ -170,6 +173,7 @@ const ProductDetails = () => {
                   </button>
                 )}
               </div>
+              
             </div>
           </>
         )}
@@ -202,7 +206,7 @@ const ProductDetails = () => {
             </>
           )}
         </div>
-        {isLoggedIn ? <ReviewProduct setAdReviews={setAdReviews} /> : null}
+        {isLoggedIn && product?.user_id != user.user_id ? <ReviewProduct setAdReviews={setAdReviews} /> : null}
       </div>
     </section>
   );

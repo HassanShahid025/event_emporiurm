@@ -5,13 +5,11 @@ import { Link, useNavigate } from "react-router-dom";
 import { IProducts } from "../../types";
 import { FaTrashAlt,FaEdit } from "react-icons/fa";
 import { useDispatch } from "react-redux";
-import { clear_cart, toggle_favourite } from "../../redux/features/cartSlice";
 import Notiflix from "notiflix";
 import useFetchDocument from "../../customHooks/useFetchDocument";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { Store_Products } from "../../redux/features/productSlice";
-import {  DatePickerr } from "../../components/datepicker/Datepicker";
 import DateModal from "../../components/datepicker/DateModal";
 
 
@@ -89,27 +87,7 @@ const MyAds = () => {
       navigate(`/add-product/${ad_id}`)
   }
 
-  const clearCart = () => {
-    Notiflix.Confirm.show(
-      "Clear Favourites",
-      "You are about to clear the favourites?",
-      "Clear",
-      "Cancel",
-      function okCb() {
-        dispatch(clear_cart());
-      },
-      function cancelCb() {
-        console.log("cancel");
-      },
-      {
-        width: "320px",
-        borderRadius: "8px",
-        titleColor: "#f7c17b",
-        okButtonBackground: "#f7c17b",
-        cssAnimationStyle: "zoom",
-      }
-    );
-  };
+ 
 
   function formatDate(dateString:string) {
     const dateObj = new Date(dateString);
@@ -169,23 +147,7 @@ const MyAds = () => {
                       <td>{price}</td>
                       <td>
                         {category}
-                        {/* <div className={style.count}>
-                          <button
-                            className="--btn"
-                           
-                          >
-                            -
-                          </button>
-                          <p>
-                            <b>{cartQuantiy}</b>
-                          </p>
-                          <button
-                            className="--btn"
-                          
-                          >
-                            +
-                          </button>
-                        </div> */}
+                       
                       </td>
                       <td>{formattedDate}</td>
                       <td className={style.icons}>
@@ -209,9 +171,7 @@ const MyAds = () => {
               </tbody>
             </table>
             <div className={style.summary}>
-              <button className="--btn --btn-danger" onClick={clearCart}>
-                Clear Cart
-              </button>
+              
               <div className={style.checkout}>
                 <div>
                   <Link to="/#products">Continue Browsing</Link>

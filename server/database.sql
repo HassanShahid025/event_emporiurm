@@ -56,4 +56,12 @@ CREATE TABLE bookings (
   ad_id INTEGER
 );
 
+CREATE TABLE contact (
+  contact_id SERIAL PRIMARY KEY,
+  user_name VARCHAR(255) NOT NULL,
+  user_email VARCHAR(255) NOT NULL,
+  subject VARCHAR(255) NOT NULL,
+  message TEXT NOT NULL
+);
+
 

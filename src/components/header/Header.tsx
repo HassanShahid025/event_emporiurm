@@ -1,22 +1,19 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import "./header.scss";
 import { Link, NavLink, useNavigate } from "react-router-dom";
-import { FaTimes, FaUserCircle } from "react-icons/fa";
+import { FaTimes } from "react-icons/fa";
 import { HiOutlineMenuAlt3 } from "react-icons/hi";
-import { signOut, onAuthStateChanged } from "firebase/auth";
-import { auth } from "../../firebase/config";
-import { ToastContainer, toast } from "react-toastify";
+import { ToastContainer,  } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useDispatch } from "react-redux";
-import { removeUser, setUser } from "../../redux/features/authSlice";
 import { useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
 import { ShowOnLogin, ShowOnLogout } from "../hiddenLinks/HiddenLinks";
-import AdminOnlyRoute, {
+import  {
   AdminOnlyLinks,
 } from "../adminOnlyRoute/AdminOnlyRoute";
 import UserDropdown from "../userDropdown/UserDropdown";
-import { MdKeyboardArrowDown } from "react-icons/md";
+const navigate = useNavigate()
 
 const logo = (
   <div className="logo">

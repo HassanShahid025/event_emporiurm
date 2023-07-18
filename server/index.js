@@ -161,6 +161,22 @@ app.post("/booking-add/:ad_id", async (req, res) => {
   }
 });
 
+//add contact message
+app.post("/contact", async (req, res) => {
+  try {
+    const { user_name, user_email, subject, message } = req.body;
+    const newEmail= await pool.query(
+      "INSERT INTO contact (user_name, user_email, subject, message) VALUES($1, $2, $3, $4) RETURNING *",
+      [user_name, user_email, subject, message]
+    );
+    res.json(newEmail.rows[0]);
+  } catch (err) {
+    console.error(err.message);
+  }
+});
+
+
+
 //get all ads
 app.get("/ads", async (req, res) => {
   try {

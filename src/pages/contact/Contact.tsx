@@ -6,15 +6,37 @@ import { useRef } from "react";
 import emailjs from "@emailjs/browser";
 import { toast } from "react-toastify";
 
+type FormRefType = HTMLFormElement | null;
+
 const Contact = () => {
-  const form = useRef();
+  const form = useRef<FormRefType>(null);
 
-  const sendEmail = (e: any) => {
+  const sendEmail = async(e:any) => {
     e.preventDefault();
+    const user_name = form.current?.user_name.value
+    const user_email = form.current?.user_email.value
+    const subject = form.current?.subject.value
+    const message = form.current?.message.value
 
-    toast.success("Message sent successfully");
+    try {
+      const body = { user_name, user_email, subject, message };
+      const response = await fetch("http://localhost:3000/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
+    } catch (error) {
+    }
 
-    e.target.reset();
+    emailjs.sendForm('service_udxm96n', 'template_q5oxrcm', form.current!, '2Z0mlE3kq0KetsF0-')
+      .then((result) => {
+          console.log(result.text);
+          toast.success("Message sent")
+          e.target.reset()
+      }, (error) => {
+          console.log(error.text);
+          toast.success("error occured")
+      });
   };
 
   return (
@@ -22,7 +44,7 @@ const Contact = () => {
       <div className={`container ${style.contact}`}>
         <h2>Contact Us</h2>
         <div className={style.section}>
-          <form onSubmit={sendEmail}>
+          <form onSubmit={sendEmail} ref={form}>
             <Card cardClass={style.card}>
               <label>Name:</label>
               <input

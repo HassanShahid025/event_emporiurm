@@ -8,6 +8,7 @@ export interface IProducts {
   price?: number;
   ad_desc?: string;
   ad_date?: string;
+  user_id:string
   venue_category?: string;
   editedAt?: any;
   cartQuantiy?: number;
