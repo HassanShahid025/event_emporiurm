@@ -1,16 +1,12 @@
 import { useEffect, useState } from "react";
 import "./viewProducts.scss";
 import { toast } from "react-toastify";
-import { deleteDoc, doc } from "firebase/firestore";
-import { db, storage } from "../../../firebase/config";
-import { Link } from "react-router-dom";
-import { FaEdit, FaTrashAlt } from "react-icons/fa";
-import Loader from "../../loader/Loader";
-import { deleteObject, ref } from "firebase/storage";
+
+import {  FaTrashAlt } from "react-icons/fa";
+
 import Notiflix from "notiflix";
 import { useDispatch } from "react-redux";
 import { Store_Products } from "../../../redux/features/productSlice";
-import useFetchCollection from "../../../customHooks/useFetchCollection";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../redux/store";
 import { filter_by_search } from "../../../redux/features/filterSlice";
@@ -19,31 +15,58 @@ import Pagination from "../../pagination/Pagination";
 import spinnerImg from '../../../assets/spinner.jpg'
 
 const ViewProducts = () => {
-  const { data, isLoading } = useFetchCollection("ads");
   const [search, setSearch] = useState("");
-  console.log(data)
-
+  const [isLoading, setIsLoading] = useState(false)
   const { filteredProducts } = useSelector((store: RootState) => store.filter);
   const { products } = useSelector((store: RootState) => store.product);
-
   const dispatch = useDispatch();
 
-  useEffect(() => {
-    dispatch(Store_Products({ products: data }));
-  }, [dispatch, data]);
+  const getAds = async () => {
+    setIsLoading(true)
+    try {
+      const response = await fetch("http://localhost:3000/ads");
+      const jsonData = await response.json();
+      dispatch(Store_Products({products:jsonData}))
+      setIsLoading(false)
+      console.log(products);
+    } catch (error) {
+      console.log(error)
+      setIsLoading(false)
+    }
+    
+  };
+
+  const deleteItem = async (id: string) => {
+    try {
+      const deleteAd = await fetch(`http://localhost:3000/ads/${id}`, {
+        method: "DELETE",
+      });
+      const newAds = products.filter((ad) => ad.ad_id !== id )
+      dispatch(Store_Products({products:newAds}))
+      // setAds(prevAds => prevAds.filter(ad => ad.ad_id !== id))
+   toast.success("Ad deleted")
+   getAds()
+    } catch (error) {
+      toast.error("error occured while deleting")
+    }}
+
+    useEffect(() => {
+      getAds()
+    },[])
+
 
   useEffect(() => {
     dispatch(filter_by_search({ products, search }));
   }, [search, products]);
 
-  const confirmDelete = (id: string, imageURL: string) => {
+  const confirmDelete = (id: string) => {
     Notiflix.Confirm.show(
       "Delete Product",
       "You are about to delete this product?",
       "Delete",
       "Cancel",
       function okCb() {
-        deleteProduct(id!, imageURL!);
+        deleteItem(id!);
       },
       function cancelCb() {
         console.log("cancel");
@@ -58,16 +81,6 @@ const ViewProducts = () => {
     );
   };
 
-  const deleteProduct = async (id: string, imageURL: string) => {
-    try {
-      await deleteDoc(doc(db, "products", id));
-      const storageRef = ref(storage, imageURL);
-      await deleteObject(storageRef);
-      toast.success("Product deleted successfully");
-    } catch (error: any) {
-      toast.error(error.message);
-    }
-  };
 
   //Pagination states
   const [currentPage, setCurrentPage] = useState(1);
@@ -95,7 +108,7 @@ const ViewProducts = () => {
           {filteredProducts.length !== 0 && (
             <p>
               <b>{filteredProducts.length} </b>
-              {filteredProducts.length > 1 ? "products found" : "product found"}
+              {filteredProducts.length > 1 ? "ads found" : "ad found"}
             </p>
           )}
           {/* {Search Icon} */}
@@ -116,13 +129,14 @@ const ViewProducts = () => {
                 <th>Image</th>
                 <th>Name</th>
                 <th>Category</th>
+                <th>City</th>
                 <th>Price</th>
                 <th>Actions</th>
               </tr>
             </thead>
             <tbody>
               {currentProducts.map((product, index) => {
-                const { ad_id, name, images, price, category } = product;
+                const { ad_id, name, images, price, category,city } = product;
                 return (
                   <tr key={ad_id}>
                     <td>{index + 1}</td>
@@ -135,16 +149,14 @@ const ViewProducts = () => {
                     </td>
                     <td>{name}</td>
                     <td>{category}</td>
+                    <td>{city}</td>
                     <td>{`$${price}`}</td>
                     <td className="icons">
-                      <Link to={`/admin/add-product/${ad_id}`}>
-                        <FaEdit color="green" size={20} />
-                      </Link>
-                      &nbsp;
+
                       <FaTrashAlt
                         color="red"
                         size={18}
-                        onClick={() => confirmDelete(ad_id!, images![0])}
+                        onClick={() => confirmDelete(ad_id!)}
                       />
                     </td>
                   </tr>

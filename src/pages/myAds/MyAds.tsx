@@ -25,7 +25,6 @@ const MyAds = () => {
   const dispatch = useDispatch();
 
   const getAds = async () => {
-    console.log("")
     try {
       const response = await fetch("http://localhost:3000/ads");
       const jsonData = await response.json();

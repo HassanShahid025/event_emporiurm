@@ -1,4 +1,3 @@
-import React from "react";
 import "./navbar.scss";
 import { FaUserCircle } from "react-icons/fa";
 import { useSelector } from "react-redux";
@@ -9,13 +8,13 @@ const activeLink = ({ isActive }: { isActive: boolean }) =>
   isActive ? "activeAdminLinks" : "";
 
 const Navbar = () => {
-  const { userName } = useSelector((store: RootState) => store.auth);
+  const { user } = useSelector((store: RootState) => store.auth.auth);
 
   return (
     <div className="navbar">
       <div className="user">
         <FaUserCircle size={40} color="#fff" />
-        <h4>{userName}</h4>
+        <h4>{user.first_name}</h4>
       </div>
       <nav>
         <ul>
@@ -25,20 +24,21 @@ const Navbar = () => {
             </NavLink>
           </li>
           <li>
-            <NavLink to="/admin/all-products" className={activeLink}>
-              All Products
+            <NavLink to="/admin/all-ads" className={activeLink}>
+              All Ads
             </NavLink>
           </li>
           <li>
-            <NavLink to="/admin/add-product/ADD" className={activeLink}>
-              Add Product
+            <NavLink to="/admin/users" className={activeLink}>
+              All Users
             </NavLink>
           </li>
           <li>
-            <NavLink to="/admin/orders" className={activeLink}>
-              Orders
+            <NavLink to="/admin/complaints" className={activeLink}>
+              All Complaints
             </NavLink>
           </li>
+          
         </ul>
       </nav>
     </div>

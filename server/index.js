@@ -35,13 +35,29 @@ app.use(express.json());
 app.post("/ads", async (req, res) => {
   try {
     const {
-      name,images,price,city, location, category, venue_category, ad_desc, ad_date,
+      name,
+      images,
+      price,
+      city,
+      location,
+      category,
+      venue_category,
+      ad_desc,
+      ad_date,
       user_id,
     } = req.body;
     const newAd = await pool.query(
       "INSERT INTO ads (name,images,price,city,location,category,venue_category,ad_desc,ad_date,user_id ) VALUES($1, $2, $3,$4,$5,$6,$7,$8,$9,$10) RETURNING *",
       [
-        name, images,price,city,location,category,venue_category,ad_desc,ad_date,
+        name,
+        images,
+        price,
+        city,
+        location,
+        category,
+        venue_category,
+        ad_desc,
+        ad_date,
         user_id,
       ]
     );
@@ -184,6 +200,16 @@ app.get("/favourites-ads/:user_id", async (req, res) => {
   }
 });
 
+//getAllUser
+app.get("/users", async (req, res) => {
+  try {
+    const allUsers = await pool.query("select * from users");
+    res.json(allUsers.rows);
+  } catch (error) {
+    console.log(error.message);
+  }
+});
+
 //getUser
 app.get("/users-login/:email", async (req, res) => {
   try {
@@ -231,31 +257,79 @@ app.get("/admin-ads-count", async (req, res) => {
 //get total complaints for admin home
 app.get("/admin-complaints-count", async (req, res) => {
   try {
-    const complaints = await pool.query("SELECT COUNT(*) AS complaints_count FROM complaints");
+    const complaints = await pool.query(
+      "SELECT COUNT(*) AS complaints_count FROM complaints"
+    );
     res.json(complaints.rows[0].complaints_count);
   } catch (error) {
     console.log(error.message);
   }
 });
 
-
-
-
 //update an ad
 app.put("/ads/:id", async (req, res) => {
   try {
     const { id } = req.params;
     const {
-      name,images,price,city,location,category,venue_category,ad_desc,ad_date,user_id,
+      name,
+      images,
+      price,
+      city,
+      location,
+      category,
+      venue_category,
+      ad_desc,
+      ad_date,
+      user_id,
     } = req.body;
 
     const updateAd = await pool.query(
       "UPDATE ads SET name = $1, images = $2, price = $3, city = $4, location = $5, category = $6, venue_category = $7, ad_desc = $8, ad_date = $9, user_id = $10 WHERE ad_id = $11",
       [
-        name,images,price,city,location,category,venue_category,ad_desc,ad_date,user_id,id,
+        name,
+        images,
+        price,
+        city,
+        location,
+        category,
+        venue_category,
+        ad_desc,
+        ad_date,
+        user_id,
+        id,
       ]
     );
     res.json("ad was updated");
+  } catch (error) {
+    console.log(error.message);
+  }
+});
+
+// update user to block it
+app.put("/user-block/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+  
+    const blockUser = await pool.query(
+      "UPDATE users SET is_blocked = true WHERE user_id = $1",
+      [id]
+    );
+    res.json("user was blocked");
+  } catch (error) {
+    console.log(error.message);
+  }
+});
+
+// update user to unblock it
+app.put("/user-unblock/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+  
+    const unblockUser = await pool.query(
+      "UPDATE users SET is_blocked = false WHERE user_id = $1",
+      [id]
+    );
+    res.json("user was unblocked");
   } catch (error) {
     console.log(error.message);
   }

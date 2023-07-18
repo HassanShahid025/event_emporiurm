@@ -45,3 +45,22 @@
       }
     }
   }
+
+  .admin-user-btn {
+  font-size: 1.3rem;
+  font-weight: 400;
+  padding: 4px 6px;
+  margin: 0 5px 0 0;
+  border: 1px solid transparent;
+  border-radius: 3px;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: all 0.3s;
+  background-color: rgb(187, 58, 58);
+  color: white;
+  &:hover{
+    background-color: red;
+  }
+}
