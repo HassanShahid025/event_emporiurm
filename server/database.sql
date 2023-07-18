@@ -22,7 +22,8 @@ CREATE TABLE users (
   password VARCHAR(255) NOT NULL,
   gender VARCHAR(10),
   city VARCHAR(100),
-  phone VARCHAR(20)
+  phone VARCHAR(20),
+  is_blocked boolean
 );
 
 CREATE TABLE favourites (
@@ -47,6 +48,12 @@ CREATE TABLE complaints (
   ad_id INT NOT NULL,
   ad_name VARCHAR(255) NOT NULL,
   complain_text TEXT NOT NULL
+);
+
+CREATE TABLE bookings (
+  booking_id SERIAL PRIMARY KEY,
+  booking_dates date[],
+  ad_id INTEGER
 );
 
 

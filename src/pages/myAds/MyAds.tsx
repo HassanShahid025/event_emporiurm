@@ -11,6 +11,8 @@ import useFetchDocument from "../../customHooks/useFetchDocument";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { Store_Products } from "../../redux/features/productSlice";
+import {  DatePickerr } from "../../components/datepicker/Datepicker";
+import DateModal from "../../components/datepicker/DateModal";
 
 
 const MyAds = () => {
@@ -187,6 +189,7 @@ const MyAds = () => {
                       </td>
                       <td>{formattedDate}</td>
                       <td className={style.icons}>
+                        <DateModal ad_id={ad_id!}/>
                         <FaEdit
                         size={18}
                         color="green"
@@ -214,22 +217,6 @@ const MyAds = () => {
                   <Link to="/#products">Continue Browsing</Link>
                 </div>
                 <br />
-                {/* <Card cardClass={style.card}>
-                  <p>
-                    Cart items(s): <b>{cartItems.length}</b>
-                  </p>
-                  <div className={style.text}>
-                    <h4>Subtotal:</h4>
-                    <h3>{`$${cartTotalAmount.toFixed(2)}`}</h3>
-                  </div>
-                  <p>Taxes and shipping calculated at checkout</p>
-                  <button
-                    className="--btn --btn-primary --btn-block"
-                    onClick={checkout}
-                  >
-                    Checkout
-                  </button>
-                </Card> */}
               </div>
             </div>
           </>

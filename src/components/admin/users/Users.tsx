@@ -1,14 +1,7 @@
-import React, { useEffect, useState } from "react";
+import  { useEffect, useState } from "react";
 import  "../viewProducts/viewProducts.scss";
-import useFetchCollection from "../../../customHooks/useFetchCollection";
-import { useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
-import { useSelector } from "react-redux";
-import { RootState } from "../../../redux/store";
-import { store_order } from "../../../redux/features/orderSlice";
 import spinnerImg from '../../../assets/spinner.jpg'
 import Search from "../../search/Search";
-import { FaTrashAlt } from "react-icons/fa";
 import Pagination from "../../pagination/Pagination";
 import { toast } from "react-toastify";
 import Notiflix from "notiflix";

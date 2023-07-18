@@ -147,11 +147,25 @@ app.post("/complaints-add/:ad_id", async (req, res) => {
   }
 });
 
+// add bookings
+app.post("/booking-add/:ad_id", async (req, res) => {
+  try {
+    const { ad_id, booking_dates } = req.body;
+    const newBooking = await pool.query(
+      "INSERT INTO bookings (ad_id, booking_dates) VALUES($1, $2) RETURNING *",
+      [ad_id, booking_dates]
+    );
+    res.json(newBooking.rows[0]);
+  } catch (err) {
+    console.error(err.message);
+  }
+});
+
 //get all ads
 app.get("/ads", async (req, res) => {
   try {
-    const allTodos = await pool.query("select * from ads");
-    res.json(allTodos.rows);
+    const allAds = await pool.query("select * from ads");
+    res.json(allAds.rows);
   } catch (error) {
     console.log(error.message);
   }
@@ -266,6 +280,30 @@ app.get("/admin-complaints-count", async (req, res) => {
   }
 });
 
+//get complaints
+app.get("/admin-complaints", async (req, res) => {
+  try {
+    const allComplaints = await pool.query("select * from complaints");
+    res.json(allComplaints.rows);
+  } catch (error) {
+    console.log(error.message);
+  }
+});
+
+// get an ad bookings
+app.get("/bookings/:ad_id", async (req, res) => {
+  try {
+    const { ad_id } = req.params;
+    const booking = await pool.query(
+      "SELECT * FROM bookings WHERE ad_id = $1",
+      [ad_id]
+    );
+    res.json(booking.rows[0]);
+  } catch (error) {
+    console.log(error.message);
+  }
+});
+
 //update an ad
 app.put("/ads/:id", async (req, res) => {
   try {
@@ -309,7 +347,7 @@ app.put("/ads/:id", async (req, res) => {
 app.put("/user-block/:id", async (req, res) => {
   try {
     const { id } = req.params;
-  
+
     const blockUser = await pool.query(
       "UPDATE users SET is_blocked = true WHERE user_id = $1",
       [id]
@@ -324,7 +362,7 @@ app.put("/user-block/:id", async (req, res) => {
 app.put("/user-unblock/:id", async (req, res) => {
   try {
     const { id } = req.params;
-  
+
     const unblockUser = await pool.query(
       "UPDATE users SET is_blocked = false WHERE user_id = $1",
       [id]
@@ -334,6 +372,23 @@ app.put("/user-unblock/:id", async (req, res) => {
     console.log(error.message);
   }
 });
+
+//update bookings
+app.put("/bookings-update/:ad_id", async (req, res) => {
+  try {
+    const { ad_id } = req.params;
+    const { booking_dates } = req.body;
+
+    const updateBooking = await pool.query(
+      "UPDATE bookings SET booking_dates = $1 WHERE ad_id = $2",
+      [booking_dates, ad_id]
+    );
+    res.json("Booking was updated");
+  } catch (error) {
+    console.log(error.message);
+  }
+});
+
 
 //delete a ad from ads
 app.delete("/ads/:id", async (req, res) => {
@@ -369,6 +424,20 @@ app.delete("/favourites-remove-ad/:ad_id", async (req, res) => {
       [ad_id]
     );
     res.json("ad was deleted");
+  } catch (error) {
+    console.log(message);
+  }
+});
+
+// delete complain
+app.delete("/complain-delete/:complain_id", async (req, res) => {
+  try {
+    const { complain_id } = req.params;
+    const deleteComplain = await pool.query(
+      "delete from complaints where complain_id = $1",
+      [complain_id]
+    );
+    res.json("complain was deleted");
   } catch (error) {
     console.log(message);
   }

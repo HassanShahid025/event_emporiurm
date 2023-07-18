@@ -38,27 +38,29 @@ export const options = {
 };
 
 const Chart = () => {
-  const { orderHistory } = useSelector((store: RootState) => store.order);
+  const { products  } = useSelector((store: RootState) => store.product);
+
+  console.log(products)
 
   //Create a new array for order status
   const array: string[] = [];
-  orderHistory.map((item: IOrder) => array.push(item.orderStatus));
+  products.map((item) => array.push(item.category!));
 
-  const getOrderStatusCount = (arr: string[], value: String) => {
+  const getAdCategoryCount = (arr: string[], value: String) => {
     return arr.filter((item) => item === value).length;
   };
 
-  const placed = getOrderStatusCount(array, "Processing...");
-  const processing = getOrderStatusCount(array, "Shipped...");
-  const shipped = getOrderStatusCount(array, "Order Placed...");
-  const delivered = getOrderStatusCount(array, "Delivered");
+  const Venue = getAdCategoryCount(array, "Venue");
+  const Decoration = getAdCategoryCount(array, "Decoration");
+  const Photography = getAdCategoryCount(array, "Photography");
+  const Food = getAdCategoryCount(array, "Food Catering");
 
   const data = {
-    labels: ["Placed Orders", "Processing", "Shipped", "Delivered"],
+    labels: ["Venue", "Decoration", "Photography", "Food Catering"],
     datasets: [
       {
         label: "Order count",
-        data: [placed, processing, shipped, delivered],
+        data: [Venue, Decoration, Photography, Food],
         backgroundColor: "rgba(255, 99, 132, 0.5)",
       },
     ],
