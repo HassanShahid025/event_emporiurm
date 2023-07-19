@@ -40,6 +40,7 @@ const ViewProfile = () => {
                   <input
                     type="text"
                     value={user.phone}
+                    disabled
                   />
                 </div>
                 <div>
@@ -65,6 +66,7 @@ const ViewProfile = () => {
                   <input
                     type="text"
                     value={user.gender}
+                    disabled
                   />
                 </div>
               </div>

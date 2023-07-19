@@ -13,7 +13,7 @@ import  {
   AdminOnlyLinks,
 } from "../adminOnlyRoute/AdminOnlyRoute";
 import UserDropdown from "../userDropdown/UserDropdown";
-const navigate = useNavigate()
+
 
 const logo = (
   <div className="logo">
