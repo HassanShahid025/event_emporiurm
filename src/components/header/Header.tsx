@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "./header.scss";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import { FaTimes } from "react-icons/fa";
@@ -30,33 +30,25 @@ const activeLink = ({ isActive }: { isActive: boolean }) =>
 
 const Header = () => {
   const [showMenu, setShowMenu] = useState(false);
-  const [name, setName] = useState<string | null>("");
-
+const navigate = useNavigate() 
   const { isLoggedIn, user } = useSelector(
     (store: RootState) => store.auth.auth
   );
 
-  console.log(isLoggedIn)
-  console.log(user)
+
+
+
+  useEffect(() => {
+    if(user.user_id == ""){
+      navigate("/")
+    }
+  },[user])
 
 
   const { cartItems } = useSelector((store: RootState) => store.cart);
 
   const dispatch = useDispatch();
 
-  //Monitor currently signed in user
-  // useEffect(() => {
-  //   onAuthStateChanged(auth, (user) => {
-  //     if (user) {
-  //       dispatch(
-  //         setUser({ email: user.email, userName: name, user_id: user.uid })
-  //       );
-  //     } else {
-  //       setName("");
-  //       dispatch(removeUser());
-  //     }
-  //   });
-  // }, [name]);
 
   const toggleMenu = () => {
     setShowMenu(!showMenu);
@@ -78,10 +70,7 @@ const Header = () => {
     </span>
   );
 
-  // useEffect(() => {
-  //   dispatch(calculate_cartTotalAmount())
-  //   dispatch(calculate_CartTotalQuantity())
-  // },[cartItems])
+ 
 
   return (
     <>

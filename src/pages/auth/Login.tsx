@@ -21,7 +21,6 @@ import { toggle_favourite } from "../../redux/features/cartSlice";
 const Login = () => {
   const [email, setEmail] = useState("");
   const [enteredPassword, setPassword] = useState("");
-  const [message,setMessage] = useState("")
   const [loading, setLoading] = useState(false);
 
   // const { previousUrl } = useSelector((store: RootState) => store.cart);
@@ -55,38 +54,38 @@ const Login = () => {
 
   const checkCredentiols = async (jsonData: any) => {
     setLoading(true)
-    setMessage("")
+    const is_blocked = jsonData[0].is_blocked
     const password = jsonData[0].password
     const body = { enteredPassword,password };
-    try {
-      const response = await fetch("http://localhost:3000/users-password", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(body),
-        });
-        if (response.ok) {
-          // Handle the success case
-          setMessage("Login successful");
-          toast.success(message)
-          setLoginUser(jsonData[0])
-        } else {
-          // Handle the error case
-          setMessage("")
-          setMessage('Invalid Password');
-          toast.error(message)
-          
-        }
-        setLoading(false)
-        
-    } catch (error) {
-      toast.error("error occured");
-      setLoading(false)
+    if(is_blocked){
+      toast.error("Email is blocked by admin")
     }
-    setMessage("")
+    else{
+      try {
+        const response = await fetch("http://localhost:3000/users-password", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(body),
+          });
+          if (response.ok) {
+            // Handle the success case
+            toast.success("Login successful")
+            setLoginUser(jsonData[0])
+          } else {
+            // Handle the error case
+            toast.error("Invalid Password")     
+          }
+          setLoading(false)
+          
+      } catch (error) {
+        toast.error("error occured");
+        setLoading(false)
+      }
+    }
+   
   };
 
   const authUser = async (e: any) => {
-    setMessage("")
     e.preventDefault();
    
     try {
@@ -98,7 +97,6 @@ const Login = () => {
         checkCredentiols(jsonData);
       } else {
         toast.error("Email is not registered");
-        
       }
     } catch (error) {
       toast.error("error occured");

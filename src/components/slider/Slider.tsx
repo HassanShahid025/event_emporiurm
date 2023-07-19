@@ -25,6 +25,10 @@ const Slider = () => {
       return () => clearInterval(slider);
     }, [currentSlide]);
 
+    const ScrollButton = () => {
+        window.scrollBy({ top: 455, behavior: 'smooth' });
+      };
+
   return (
     <div className="slider">
       <AiOutlineArrowLeft className="arrow prev" onClick={prevSlide} />
@@ -44,16 +48,15 @@ const Slider = () => {
           <article
             key={index}
             className={position}
-          >
-            
+          >        
                 <img src={slide.image} alt="slide" />
                 <div className="content">
                   <h2>{slide.heading}</h2>
                   <p>{slide.desc}</p>
                   <hr />
-                  <Link to="/#products" className="--btn --btn-primary">
-                    Shop Now
-                  </Link>
+                  <button  className="--btn --btn-primary" onClick={ScrollButton}>
+                    View Now
+                  </button>
                 </div>
              
            

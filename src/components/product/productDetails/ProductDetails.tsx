@@ -24,16 +24,27 @@ const ProductDetails = () => {
   const { id } = useParams();
   const [product, setProduct] = useState<IProducts | null>(null);
   const [bookingDates, setBookingDates] = useState<any[]>([]);
+  const [fav, setFav] = useState<any>([]);
+  const isFavourite = fav.find((item: any) => item.ad_id == id);
 
-  const { document } = useFetchDocument("ads", id!);
+  const getAd = async () => {
+    const intValue = parseInt(id!);
+    try {
+      const response = await fetch(`http://localhost:3000/ads/${intValue}`);
+      const jsonData = await response.json();
+      setProduct(jsonData);
+      console.log(jsonData);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  console.log(id);
 
   useEffect(() => {
-    setProduct(document);
-  }, [document]);
+    getAd();
+  }, []);
 
   const dispatch = useDispatch();
-  const navigate = useNavigate();
-  const location = useLocation();
 
   const { cartItems } = useSelector((store: RootState) => store.cart);
   const { isLoggedIn, user } = useSelector(
@@ -41,16 +52,25 @@ const ProductDetails = () => {
   );
   const [adReviews, setAdReviews] = useState<any[]>([]);
 
-  const cart = cartItems.find((cart) => cart.ad_id === id);
-  console.log(user);
+  const getFav = async () => {
+    if (isLoggedIn) {
+      try {
+        const response = await fetch(
+          `http://localhost:3000/favourites-ads/${user.user_id}`
+        );
+        const jsonData = await response.json();
+        setFav(jsonData);
+      } catch (error) {
+        toast.error("Error occured while fetching favourites");
+      }
+    }
+  };
 
   const getReviews = async () => {
     try {
-      const user_id = user.user_id;
       const response = await fetch(`http://localhost:3000/reviews/${id}`);
       const jsonData = await response.json();
       setAdReviews(jsonData);
-      console.log(jsonData);
     } catch (error) {
       toast.error("error occured");
     }
@@ -67,6 +87,7 @@ const ProductDetails = () => {
       console.log(convertedDates);
       console.log(jsonData);
       setBookingDates(convertedDates);
+      getFav();
     } catch (error) {
       console.log("error occured");
     }
@@ -74,41 +95,44 @@ const ProductDetails = () => {
 
   useEffect(() => {
     getReviews();
-    getBookings()
+    getBookings();
   }, []);
 
-  const toggleFavourite = () => {
-    dispatch(toggle_favourite({ product }));
-  };
-
-  const checkLogin = () => {
+  const addTofav = async (ad_id: string) => {
     if (isLoggedIn) {
-      toggleFavourite();
+      try {
+        const body = { ad_id: ad_id, user_id: user.user_id };
+        const response = await fetch("http://localhost:3000/favourites", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(body),
+        });
+        getFav();
+        toast.success("Added to favourites");
+      } catch (error) {
+        toast.error("Error occured");
+      }
     } else {
-      Notiflix.Confirm.show(
-        "Login",
-        "Login to add to favourites",
-        "Login",
-        "Cancel",
-        function okCb() {
-          navigate("/login");
-          dispatch(addPrevURL({ product, url: location.pathname }));
-        },
-        function cancelCb() {
-          console.log("cancel");
-        },
-        {
-          width: "320px",
-          borderRadius: "8px",
-          titleColor: "#f7c17b",
-          okButtonBackground: "#f7c17b",
-          cssAnimationStyle: "zoom",
-        }
-      );
+      toast.error("Please login first");
     }
   };
 
-  console.log(product?.user_id)
+  const remove_favourite = async (ad_id: string) => {
+    try {
+      const deleteFav = await fetch(
+        `http://localhost:3000/favourites-remove-ad/${ad_id}`,
+        {
+          method: "DELETE",
+        }
+      );
+      getFav();
+      toast.success("Ad removed from favourites");
+    } catch (error) {
+      toast.error("error occured while removing");
+    }
+  };
+
+  console.log(product);
 
   return (
     <section>
@@ -124,20 +148,22 @@ const ProductDetails = () => {
             <div className={style.details}>
               <div className={style.img}>
                 <Carousell url={product.images!} />
-                {/* <img src={product.imageURL} alt={product.name} /> */}
               </div>
               <div className={style.content}>
                 <h3>{product.name}</h3>
                 <div className={style.flex}>
-                <p className={style.price}>{`Rs: ${product.price}`}</p>
-                <span >
-                  <p className={style.price}>Bookings:</p>
-                <AdBookings bookingDates={bookingDates}/>
-                </span>
+                  <p className={style.price}>{`Rs: ${product.price}`}</p>
+                  <span>
+                    <p className={style.price}>Bookings:</p>
+                    <AdBookings bookingDates={bookingDates} />
+                  </span>
                 </div>
                 <p>{product.ad_desc}</p>
                 <p>
                   <b>SKU:</b> {product.ad_id}
+                </p>
+                <p>
+                  <b>Phone:</b> {product.phone}
                 </p>
                 <p>
                   <b>City:</b> {product.city}
@@ -156,12 +182,21 @@ const ProductDetails = () => {
                     View on Google maps <FiExternalLink />
                   </a>
                 </p>
-                <button
-                  className="--btn --btn-danger"
-                  onClick={() => checkLogin()}
-                >
-                  {cart ? "REMOVE FROM FAVOURITES" : "ADD TO FAVOURITES"}
-                </button>
+                {isFavourite ? (
+                  <button
+                    className="--btn --btn-danger"
+                    onClick={() => remove_favourite(product.ad_id!)}
+                  >
+                    REMOVE FROM FAVOURITES
+                  </button>
+                ) : (
+                  <button
+                    className="--btn --btn-danger"
+                    onClick={() => addTofav(product.ad_id!)}
+                  >
+                    ADD TO FAVOURITES
+                  </button>
+                )}
                 {isLoggedIn ? (
                   <ComplainModal name={product.name!} />
                 ) : (
@@ -173,40 +208,44 @@ const ProductDetails = () => {
                   </button>
                 )}
               </div>
-              
             </div>
           </>
         )}
-        <h3>Venue Reviews</h3>
-        <div>
-          {adReviews === null || adReviews.length === 0 ? (
-            <p>There are no reviews for this product yet</p>
-          ) : (
-            <>
-              <Card cardClass={style.card}>
-                {adReviews.map((item: any, index: any) => {
-                  const { rating, review_text, review_date, first_name } = item;
-                  const date = new Date(review_date);
-                  const formattedDate = date.toLocaleDateString("en-GB");
-                  return (
-                    <div className={style.review} key={index}>
-                      <StarsRating value={rating} />
-                      <p>{review_text}</p>
-                      <span>
-                        <b>{formattedDate}</b>
-                      </span>
-                      <br />
-                      <span>
-                        <b>By: {first_name}</b>
-                      </span>
-                    </div>
-                  );
-                })}
-              </Card>
-            </>
-          )}
+        <div >
+          <div>
+            <h3>Venue Reviews</h3>
+            {adReviews === null || adReviews.length === 0 ? (
+              <p>There are no reviews for this product yet</p>
+            ) : (
+              <>
+                <Card cardClass={style.card}>
+                  {adReviews.map((item: any, index: any) => {
+                    const { rating, review_text, review_date, first_name } =
+                      item;
+                    const date = new Date(review_date);
+                    const formattedDate = date.toLocaleDateString("en-GB");
+                    return (
+                      <div className={style.review} key={index}>
+                        <StarsRating value={rating} />
+                        <p>{review_text}</p>
+                        <span>
+                          <b>{formattedDate}</b>
+                        </span>
+                        <br />
+                        <span>
+                          <b>By: {first_name}</b>
+                        </span>
+                      </div>
+                    );
+                  })}
+                </Card>
+              </>
+            )}
+          </div>
+          {isLoggedIn && product?.user_id != user.user_id ? (
+            <ReviewProduct setAdReviews={setAdReviews} />
+          ) : null}
         </div>
-        {isLoggedIn && product?.user_id != user.user_id ? <ReviewProduct setAdReviews={setAdReviews} /> : null}
       </div>
     </section>
   );

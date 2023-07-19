@@ -8,26 +8,10 @@ const app = express();
 const cors = require("cors");
 const pool = require("./db");
 const bcrypt = require("bcrypt");
-// const passsport = require("passport")
-// const flash = require('express-flash')
-// const session = require('express-session')
-
-// const initializePassport = require("./passportConfig")
 
 //middle
 app.use(cors());
 app.use(express.json());
-// app.use(
-//   session({
-//     secret:"secret",
-
-//     resave: false,
-//     saveUninitialized: false
-//   })
-// )
-// app.use(passsport.initialize)
-// app.use(passsport.session)
-// app.use(flash())
 
 //Routes//
 
@@ -165,7 +149,7 @@ app.post("/booking-add/:ad_id", async (req, res) => {
 app.post("/contact", async (req, res) => {
   try {
     const { user_name, user_email, subject, message } = req.body;
-    const newEmail= await pool.query(
+    const newEmail = await pool.query(
       "INSERT INTO contact (user_name, user_email, subject, message) VALUES($1, $2, $3, $4) RETURNING *",
       [user_name, user_email, subject, message]
     );
@@ -174,8 +158,6 @@ app.post("/contact", async (req, res) => {
     console.error(err.message);
   }
 });
-
-
 
 //get all ads
 app.get("/ads", async (req, res) => {
@@ -191,7 +173,11 @@ app.get("/ads", async (req, res) => {
 app.get("/ads/:id", async (req, res) => {
   try {
     const { id } = req.params;
-    const ad = await pool.query("select * from ads where ad_id = $1", [id]);
+    const ad = await pool.query(
+      
+   " SELECT ads.*, users.phone FROM ads INNER JOIN users ON CAST(ads.user_id AS INTEGER) = users.user_id WHERE ads.ad_id = $1;"
+  , [id]
+    );
     res.json(ad.rows[0]);
   } catch (error) {
     console.log(error.message);
@@ -243,7 +229,7 @@ app.get("/users", async (req, res) => {
 //getUser
 app.get("/users-login/:email", async (req, res) => {
   try {
-    const { email } = req.params;
+    const { email  } = req.params;
     const user = await pool.query("select * from users where email = $1", [
       email,
     ]);
@@ -405,6 +391,21 @@ app.put("/bookings-update/:ad_id", async (req, res) => {
   }
 });
 
+//update user
+app.put("/user-update/:user_id", async (req, res) => {
+  try {
+    const { user_id } = req.params;
+    const { first_name, last_name, phone, city, email, gender } = req.body;
+
+    const updateUser = await pool.query(
+      "UPDATE users SET first_name = $1, last_name = $2, phone = $3, city = $4, email = $5, gender = $6 WHERE user_id = $7",
+      [first_name, last_name, phone, city, email, gender, user_id]
+    );
+    res.json("User was updated");
+  } catch (error) {
+    console.log(error.message);
+  }
+});
 
 //delete a ad from ads
 app.delete("/ads/:id", async (req, res) => {

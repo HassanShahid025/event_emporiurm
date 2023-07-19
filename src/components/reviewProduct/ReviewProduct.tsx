@@ -2,15 +2,12 @@ import React, { useEffect, useState } from "react";
 import style from "./reviewProduct.module.scss";
 import { useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { auth, db } from "../../firebase/config";
 import { RootState } from "../../redux/store";
 import { Card } from "../card/Card";
 import StarsRating from "react-star-rate";
 import { toast } from "react-toastify";
-import { Timestamp, addDoc, collection } from "firebase/firestore";
 import useFetchDocument from "../../customHooks/useFetchDocument";
 import { IProducts } from "../../types";
-import spinnerImg from "../../assets/spinner.jpg";
 
 interface IReviews{
   setAdReviews: React.Dispatch<React.SetStateAction<any[]>>
@@ -23,7 +20,6 @@ const ReviewProduct = ({setAdReviews}:IReviews) => {
   const { id } = useParams();
 
   const { user } = useSelector((store: RootState) => store.auth.auth);
-  const { products } = useSelector((store: RootState) => store.product);
   const { document } = useFetchDocument("products", id!);
   const [date, setDate] = useState("")
 
@@ -74,11 +70,6 @@ const ReviewProduct = ({setAdReviews}:IReviews) => {
     <section>
       <div className={`container ${style.review}`}>
         <h2>Review Product</h2>
-        {/* {product === null ? (
-          <div className="loading-container">
-            <img src={spinnerImg} />
-          </div>
-        ) : ( */}
           <>
             <p>
               <b>Product Name</b> {product?.name}

@@ -8,6 +8,7 @@ export interface IProducts {
   price?: number;
   ad_desc?: string;
   ad_date?: string;
+  phone?:string
   user_id?:string
   venue_category?: string;
   editedAt?: any;

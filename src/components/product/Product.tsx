@@ -3,7 +3,6 @@ import style from "./product.module.scss";
 import ProductFilter from "./productFilter/ProductFilter";
 import { ProductList } from "./productList/ProductList";
 import { useDispatch } from "react-redux";
-import useFetchCollection from "../../customHooks/useFetchCollection";
 import {
   Store_Products,
   get_price_range,
@@ -13,7 +12,6 @@ import { RootState } from "../../redux/store";
 import spinnerImg from "../../assets/spinner.jpg";
 import { FaCogs } from "react-icons/fa";
 import { IProducts } from "../../types";
-import { toast } from "react-toastify";
 
 const Product = () => {
   // const { data, isLoading } = useFetchCollection("products");

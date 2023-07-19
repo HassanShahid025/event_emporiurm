@@ -25,8 +25,6 @@ export const ProductList = ({ products }: IProductList) => {
   const { filteredProducts } = useSelector((store: RootState) => store.filter);
   const [filterProducts, setFilterProducts] = useState<any[]>([])
 
-  console.log(filteredProducts)
-
   useEffect(() => {
     setFilterProducts(filteredProducts)
   },[filteredProducts])

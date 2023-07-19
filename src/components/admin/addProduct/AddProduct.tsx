@@ -335,7 +335,7 @@ const AddProduct = () => {
                   value={product.images![0]}
                 />
 
-                {/* <input
+                <input
                   type="text"
                   // required
                   placeholder="Image URL"
@@ -360,9 +360,9 @@ const AddProduct = () => {
                   name="imageURL"
                   disabled
                   value={product.images![3]}
-                /> */}
+                />
 
-                {/* </Card> */}
+                
 
                 <div className={styles.flex}>
                   <div>

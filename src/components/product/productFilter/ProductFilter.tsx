@@ -61,9 +61,10 @@ const ProductFilter = () => {
 
   const clearFilters = () => {
     setCategory("All")
-  
     setPrice(maxPrice!)
   }
+
+ 
 
   return (
     <div className={style.filter}>

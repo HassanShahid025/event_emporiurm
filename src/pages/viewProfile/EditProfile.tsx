@@ -1,21 +1,15 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Modal } from "antd";
 import { Card } from "../../components/card/Card";
 import style from './viewProfile.module.scss'
 import { useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { setUser } from "../../redux/features/authSlice";
 
 
-const initialState = {
-  first_name: "",
-  last_name: "",
-  email: "",
-  city: "",
-  password: "",
-  confirmPassword: "",
-  gender: "",
-  phone: "",
-};
 
 const EditProfile = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -28,12 +22,15 @@ const EditProfile = () => {
     const {name, value} = e.target;
     setEditUser({ ...editUser, [name]: value });
   };
-console.log(user.city)
+
+  const dispatch = useDispatch()
+
   const showModal = () => {
     setIsModalOpen(true);
   };
 
   const handleOk = () => {
+    dispatch(setUser(editUser))
     setIsModalOpen(false);
   };
 
@@ -41,16 +38,34 @@ console.log(user.city)
     setIsModalOpen(false);
   };
 
+  const handleEdit = async() => {
+    const {first_name, last_name, phone, city, email, gender,user_id} = editUser
+    try {
+      const body = { first_name, last_name, phone, city, email, gender };
+      const response = await fetch(`http://localhost:3000/user-update/${user_id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
+      handleOk()
+      toast.success("Profile updated")
+     
+    } catch (error) {
+      toast.error("Error occured")
+
+    }
+  }
+
   return (
     <>
       <button className="--btn --btn-primary" onClick={showModal}>Edit Profile</button>
       <Modal
         open={isModalOpen}
-        onOk={handleOk}
+        onOk={handleEdit}
         onCancel={handleCancel}
         width={900}
       >
-         <h2>Your Profile</h2>
+         <h2>Edit Profile</h2>
         <div className={style.section}>
           <div className={style.form}>
             <Card cardClass={style.card}>
@@ -92,7 +107,7 @@ console.log(user.city)
                 </div>
                 <div>
                   <label>City:</label>
-                  <select required name="city" value={user.city} onChange={(e) => handleInput(e)}>
+                  <select required name="city" value={editUser.city} onChange={(e) => handleInput(e)}>
                     <option value="" disabled>
                       -- Choose City--
                     </option>
@@ -120,7 +135,7 @@ console.log(user.city)
                 </div>
                 <div>
                   <label>Gender:</label>
-                  <select required name="gender" value={user.gender} onChange={(e) => handleInput(e)}>
+                  <select required name="gender" value={editUser.gender} onChange={(e) => handleInput(e)}>
                     <option value="" disabled>
                       -- Choose Your Gender--
                     </option>

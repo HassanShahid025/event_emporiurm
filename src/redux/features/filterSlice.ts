@@ -78,8 +78,9 @@ const filterSlice = createSlice({
     },
     filter_by_price:(state, {payload}) => {
       const {price, products} = payload
+      const intPrice = parseInt(price, 10);
       let tempProducts:IProducts[] = []
-      tempProducts = products.filter((product:IProducts) => product.price! <= price)
+      tempProducts = products.filter((product:IProducts) => product.price! >= intPrice)
       state.filteredProducts = tempProducts
     }
   },

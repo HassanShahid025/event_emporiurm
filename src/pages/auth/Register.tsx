@@ -23,7 +23,6 @@ const Register = () => {
   const [user, setUser] = useState({ ...initialState });
   const [loading, setLoading] = useState(false);
 
-  console.log(user)
 
   const handleInput = (e: any) => {
     const {name, value} = e.target;

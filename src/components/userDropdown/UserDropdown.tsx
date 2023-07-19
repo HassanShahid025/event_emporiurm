@@ -36,18 +36,7 @@ const UserDropdown = () => {
       label: <Link to={`/view-profile/${user_id}`}>View and Edit profile</Link>,
       icon: <FaUserAlt />,
     },
-    {
-      key: "3",
-      label: (
-        <Link
-          to='/todo'
-        >
-          Todo List 
-        </Link>
-      ),
-      icon: <FaListAlt />,
-      
-    },
+
     {
       key: "4",
       label: (

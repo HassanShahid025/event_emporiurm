@@ -1,14 +1,12 @@
-import {useState} from "react";
 import style from "./viewProfile.module.scss";
 import { Card } from "../../components/card/Card";
 import EditProfile from "./EditProfile";
 import { useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
 
-
-
 const ViewProfile = () => {
   const { user } = useSelector((store: RootState) => store.auth.auth);
+
   return (
     <section>
       <div className={`container`}>

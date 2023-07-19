@@ -158,9 +158,7 @@ const Cart = () => {
               </tbody>
             </table>
             <div className={style.summary}>
-              <button className="--btn --btn-danger" onClick={clearCart}>
-                Clear Cart
-              </button>
+              
               <div className={style.checkout}>
                 <div>
                   <Link to="/#products">Continue Browsing</Link>

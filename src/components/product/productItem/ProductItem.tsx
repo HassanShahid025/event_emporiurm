@@ -4,13 +4,11 @@ import { IProducts } from "../../../types";
 import { Card } from "../../card/Card";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { toggle_favourite } from "../../../redux/features/cartSlice";
 import { AiOutlineHeart, AiTwotoneHeart } from "react-icons/ai";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../redux/store";
-import Notiflix from "notiflix";
-import { addPrevURL } from "../../../redux/features/authSlice";
 import { toast } from "react-toastify";
+import loadingImg from "../../../assets/loadingImg.jpg"
 
 interface IProductItem {
   product: IProducts;
@@ -38,37 +36,6 @@ const ProductItem = ({ product, grid }: IProductItem) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  // const addToCart = (product: IProducts) => {
-  //   dispatch(add_to_cart({ product }));
-  //   dispatch(calculate_CartTotalQuantity());
-
-  // const checkLogin = async() => {
-  //   if (isLoggedIn) {
-  //     toggleFavourite();
-      
-  //   } else {
-  //     Notiflix.Confirm.show(
-  //       "Login",
-  //       "Login to add to favourites",
-  //       "Login",
-  //       "Cancel",
-  //       function okCb() {
-  //         navigate("/login");
-  //         dispatch(addPrevURL({ product, url: "/" }));
-  //       },
-  //       function cancelCb() {
-  //         console.log("cancel");
-  //       },
-  //       {
-  //         width: "320px",
-  //         borderRadius: "8px",
-  //         titleColor: "#f7c17b",
-  //         okButtonBackground: "#f7c17b",
-  //         cssAnimationStyle: "zoom",
-  //       }
-  //     );
-  //   }
-  // };
 
   const addTofav = async(ad_id:string) => {
     if(isLoggedIn){
@@ -112,29 +79,43 @@ const ProductItem = ({ product, grid }: IProductItem) => {
     }
   }
 
-  
-
   useEffect(() => {
     if(isLoggedIn){
       getFav()
-
     }
   },[])
 
-
-  // const toggleFavourite = () => {
-  //   dispatch(toggle_favourite({ product }));
-  // };
 
   useEffect(() => {
     setWindowWidth(windowWidth);
   }, [grid]);
 
+  // dummy image while image loading
+
+  const [isLoading, setIsLoading] = useState(true);
+  const [hasError, setHasError] = useState(false);
+
+  useEffect(() => {
+    const loadImage = new Image();
+    loadImage.onload = () => {
+      setIsLoading(false);
+    };
+    loadImage.onerror = () => {
+      setIsLoading(false);
+      setHasError(true);
+    };
+    loadImage.src = images![0]; // Replace with your Firebase Storage image URL
+  }, []);
+
   return (
     <Card cardClass={grid ? `${style.grid}` : `${style.list}`}>
       <Link to={`/product-details/${ad_id}`}>
         <div className={style.img}>
-          <img src={images![0]} alt={name} />
+         
+        {isLoading && <img src={loadingImg} alt="Placeholder Image" />}
+      {!isLoading && !hasError && (
+        <img src={images![0]} alt="Actual Image" />
+      )}
         </div>
       </Link>
       <div className={style.content}>
@@ -165,12 +146,6 @@ const ProductItem = ({ product, grid }: IProductItem) => {
               : shortingText(ad_desc!, 50)}
           </p>
         )}
-        {/* <button
-          className="--btn --btn-danger"
-          onClick={() => addToCart(product)}
-        >
-          Add To Cart
-        </button> */}
       </div>
     </Card>
   );
